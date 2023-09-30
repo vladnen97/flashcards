@@ -6,7 +6,6 @@ import { Modal } from './'
 
 import { EditOutline, TrashOutline } from 'assets/icons'
 import { Checkbox } from 'components/ui/checkbox'
-import { Select } from 'components/ui/select'
 import { TextField } from 'components/ui/text-field'
 import { Typography } from 'components/ui/typography'
 
@@ -17,7 +16,6 @@ const meta = {
   argTypes: {
     trigger: {},
     title: {},
-    footerBtn: {},
     children: {},
   },
 } satisfies Meta<typeof Modal>
@@ -28,13 +26,13 @@ type Story = StoryObj<typeof meta>
 export const AddNewPack: Story = {
   args: {
     trigger: <Button>Add New Pack</Button>,
-    title: <Typography variant="h1">Add New Pack</Typography>,
-    footerBtn: <Button>Add New Pack</Button>,
+    title: 'Add New Pack',
     children: (
-      <>
+      <div style={{ display: 'flex', gap: '24px', flexDirection: 'column' }}>
         <TextField label="Name Pask" />
         <Checkbox label="Private pack" />
-      </>
+        <Button>Add Pack</Button>
+      </div>
     ),
   },
 }
@@ -42,13 +40,13 @@ export const AddNewPack: Story = {
 export const EditPack: Story = {
   args: {
     trigger: <EditOutline />,
-    title: <Typography variant="h1">Edit Pack</Typography>,
-    footerBtn: <Button>Save Changes</Button>,
+    title: 'Edit Pack',
     children: (
-      <>
+      <div style={{ display: 'flex', gap: '24px', flexDirection: 'column' }}>
         <TextField label="Name Pask" />
         <Checkbox label="Private pack" />
-      </>
+        <Button>Save Changes</Button>
+      </div>
     ),
   },
 }
@@ -56,73 +54,16 @@ export const EditPack: Story = {
 export const DeletePack: Story = {
   args: {
     trigger: <TrashOutline />,
-    title: <Typography variant="h1">Delete Pack</Typography>,
-    footerBtn: <Button>Delete Pack</Button>,
+    title: 'Delete Pack',
     children: (
-      <Typography style={{ whiteSpace: 'pre-line' }}>
-        Do you really want to remove Pack Name?
-        {'\n'}
-        All cards will be deleted.
-      </Typography>
-    ),
-  },
-}
-
-export const AddNewCard: Story = {
-  args: {
-    trigger: <Button>Add New Card</Button>,
-    title: <Typography variant="h1">Add New Card</Typography>,
-    footerBtn: <Button>Add New Card</Button>,
-    children: (
-      <>
-        <Select
-          options={[
-            { label: 'Text', value: 'item-1' },
-            { label: 'Image', value: 'item-2' },
-          ]}
-          label="Choose a question format"
-          placeholder={'Text'}
-        />
-        <TextField label="Question" />
-        <TextField label="Answer" />
-      </>
-    ),
-  },
-}
-
-export const EditCard: Story = {
-  args: {
-    trigger: <EditOutline />,
-    title: <Typography variant="h1">Edit Card</Typography>,
-    footerBtn: <Button>Save Changes</Button>,
-    children: (
-      <>
-        <Select
-          options={[
-            { label: 'Text', value: 'item-1' },
-            { label: 'Image', value: 'item-2' },
-          ]}
-          label="Choose a question format"
-        />
-        <TextField label="Question" />
-        <TextField label="Answer" />
-      </>
-    ),
-  },
-}
-
-export const DeleteCard: Story = {
-  args: {
-    trigger: <TrashOutline />,
-    title: <Typography variant="h1">Edit Card</Typography>,
-    footerBtn: <Button>Delete Card</Button>,
-    children: (
-      <Typography style={{ whiteSpace: 'pre-line' }}>
-        {' '}
-        Do you really want to remove Card Name?
-        {'\n'}
-        All cards will be deleted.
-      </Typography>
+      <div style={{ display: 'flex', gap: '24px', flexDirection: 'column' }}>
+        <Typography style={{ whiteSpace: 'pre-line' }}>
+          Do you really want to remove Pack Name?
+          {'\n'}
+          All cards will be deleted.
+        </Typography>
+        <Button>Delete Pack</Button>
+      </div>
     ),
   },
 }
