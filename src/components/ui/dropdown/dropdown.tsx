@@ -16,7 +16,7 @@ export const Dropdown: FC<DropdownProps> = ({ trigger, children }) => {
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>{trigger}</DropdownMenu.Trigger>
       <DropdownMenu.Content className={s.content} sideOffset={10} align={'end'}>
-        <div className={s.itemsBlock}>{children}</div>
+        <div>{children}</div>
         <DropdownMenu.Arrow className={s.arrow_block} asChild>
           <div className={s.arrow} />
         </DropdownMenu.Arrow>
@@ -29,7 +29,6 @@ export type DropdownItemProps = {
   children?: ReactNode
   disabled?: boolean
   onSelect?: () => void
-  className?: string
 }
 
 export const DropdownItem: FC<DropdownItemProps> = ({ children, disabled, onSelect }) => {
