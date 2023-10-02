@@ -1,11 +1,61 @@
 import { ComponentPropsWithoutRef, FC } from 'react'
 
+import s from './table.module.scss'
+
+export type Sort = {
+  key: string
+  direction: 'asc' | 'desc'
+} | null
+
+export type Column = {
+  key: string
+  title: string
+  sortable?: boolean
+}
+
 export const Table: FC<ComponentPropsWithoutRef<'table'>> = ({ className, ...props }) => {
-  return <table className={className} {...props} />
+  return <table className={`${s.table} ${className}`} {...props} />
 }
 
 export const TableHeader: FC<ComponentPropsWithoutRef<'thead'>> = ({ className, ...props }) => {
   return <thead className={className} {...props} />
+}
+
+export const Head: FC<
+  Omit<
+    ComponentPropsWithoutRef<'thead'> & {
+      columns: Column[]
+      sort?: Sort
+      onSort?: (sort: Sort) => void
+    },
+    'children'
+  >
+> = ({ columns, sort, onSort, ...rest }) => {
+  const handleSort = (key: string, sortable?: boolean) => {
+    if (!onSort || !sortable) return
+
+    if (sort?.key !== key) return onSort({ key, direction: 'asc' })
+
+    if (sort.direction === 'desc') return onSort(null)
+
+    return onSort({
+      key,
+      direction: sort?.direction === 'asc' ? 'desc' : 'asc',
+    })
+  }
+
+  return (
+    <TableHeader {...rest}>
+      <TableRow>
+        {columns.map(column => (
+          <TableHead key={column.key} onClick={() => handleSort(column.key, column.sortable)}>
+            {column.title}
+            {sort?.key === column.key && <span>{sort.direction === 'asc' ? '▲' : '▼'}</span>}
+          </TableHead>
+        ))}
+      </TableRow>
+    </TableHeader>
+  )
 }
 
 export const TableBody: FC<ComponentPropsWithoutRef<'tbody'>> = ({ className, ...props }) => {
@@ -21,11 +71,11 @@ export const TableRow: FC<ComponentPropsWithoutRef<'tr'>> = ({ className, ...pro
 }
 
 export const TableHead: FC<ComponentPropsWithoutRef<'th'>> = ({ className, ...props }) => {
-  return <th className={className} {...props} />
+  return <th className={`${s.headCell} ${className}`} {...props} />
 }
 
 export const TableCell: FC<ComponentPropsWithoutRef<'td'>> = ({ className, ...props }) => {
-  return <td className={className} {...props} />
+  return <td className={`${s.tableCell} ${className}`} {...props} />
 }
 
 export const TableCaption: FC<ComponentPropsWithoutRef<'caption'>> = ({ className, ...props }) => {
