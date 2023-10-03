@@ -14,7 +14,14 @@ type ModalProps = {
   title?: string
 } & ComponentProps<'div'>
 
-export const Modal: FC<ModalProps> = ({ open = false, onClose, trigger, title, children }) => {
+export const Modal: FC<ModalProps> = ({
+  open = false,
+  onClose,
+  trigger,
+  title,
+  children,
+  className,
+}) => {
   return (
     <DialogRadix.Root open={open} onOpenChange={() => onClose?.()}>
       <DialogRadix.Trigger asChild>{trigger}</DialogRadix.Trigger>
@@ -31,7 +38,7 @@ export const Modal: FC<ModalProps> = ({ open = false, onClose, trigger, title, c
                 <Close />
               </DialogRadix.Close>
             </header>
-            <div className={s.content}>{children}</div>
+            <div className={`${s.content} ${className}`}>{children}</div>
           </DialogRadix.Content>
         </DialogRadix.Overlay>
       </DialogRadix.Portal>
