@@ -1,3 +1,5 @@
+import { ReactNode } from 'react'
+
 import Button from 'components/ui/button/button.tsx'
 import { Modal } from 'components/ui/modal'
 import { Typography } from 'components/ui/typography'
@@ -6,18 +8,14 @@ import { Typography } from 'components/ui/typography'
 import s from './delete-pack.module.scss'
 
 type Props = {
+  trigger: ReactNode
   open: boolean
   onClose: () => void
   onDelete: () => void
 }
 export const DeletePack = (props: Props) => {
   return (
-    <Modal
-      trigger={<Button>Delete</Button>}
-      title={'Delete Pack'}
-      open={props.open}
-      onClose={props.onClose}
-    >
+    <Modal trigger={props.trigger} title={'Delete Pack'} open={props.open} onClose={props.onClose}>
       <Typography variant={'subtitle1'} className={s.content}>
         Do you really want to remove Pack Name? <br />
         All cards will be deleted.

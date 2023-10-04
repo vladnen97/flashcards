@@ -1,3 +1,5 @@
+import { ReactNode } from 'react'
+
 import s from '../add-new-pack/add-new-pack.module.scss'
 
 import { FormValues, useAddNewPack } from 'components/modals/add-new-pack'
@@ -6,6 +8,7 @@ import { ControlledCheckbox, ControlledTextField } from 'components/ui/controlle
 import { Modal } from 'components/ui/modal'
 
 type Props = {
+  trigger: ReactNode
   open: boolean
   onClose: () => void
   onSubmit: (data: FormValues) => void
@@ -15,12 +18,7 @@ export const EditDeck = (props: Props) => {
   const { handleSubmit, control } = useAddNewPack()
 
   return (
-    <Modal
-      trigger={<Button>Edit</Button>}
-      title={'Edit Pack'}
-      open={props.open}
-      onClose={props.onClose}
-    >
+    <Modal trigger={props.trigger} title={'Edit Pack'} open={props.open} onClose={props.onClose}>
       <form onSubmit={handleSubmit(props.onSubmit)} className={s.content}>
         <ControlledTextField name={'deckName'} control={control} label={'Name Deck'} />
         <ControlledCheckbox name={'isPrivate'} control={control} label={'Private deck'} />
@@ -28,7 +26,7 @@ export const EditDeck = (props: Props) => {
           <Button onClick={props.onClose} type={'button'} variant={'secondary'}>
             Cancel
           </Button>
-          <Button type={'submit'}>Add New Deck</Button>
+          <Button type={'submit'}>Save Changes</Button>
         </div>
       </form>
     </Modal>

@@ -2,7 +2,9 @@ import { useState } from 'react'
 
 import type { Meta } from '@storybook/react'
 
+import { TrashOutline } from 'assets/icons'
 import { DeletePack } from 'components/modals/delete-pack'
+import Button from 'components/ui/button/button.tsx'
 
 const meta = {
   title: 'Components/MODALS/DeletePack',
@@ -17,7 +19,18 @@ const DeleteDeckWithHooks = () => {
 
   const handleDelete = () => console.log('Deck deleted')
 
-  return <DeletePack open={open} onClose={() => setOpen(state => !state)} onDelete={handleDelete} />
+  return (
+    <DeletePack
+      open={open}
+      onClose={() => setOpen(state => !state)}
+      onDelete={handleDelete}
+      trigger={
+        <Button>
+          <TrashOutline /> Delete
+        </Button>
+      }
+    />
+  )
 }
 
 export const Default = {
