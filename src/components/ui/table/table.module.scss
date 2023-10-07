@@ -1,13 +1,24 @@
 .table {
   border-collapse: collapse;
+  width: 100%;
   color: var(--color-light-100);
   border: 1px solid var(--color-dark-500);
 }
 
 .headCell {
+  cursor: default;
   padding: 6px 24px;
-  text-align: left;
   background-color: var(--color-dark-500);
+
+  &[data-sortable] {
+    cursor: pointer;
+    user-select: none;
+  }
+}
+
+.headCellContent {
+  display: flex;
+  gap: 5px;
 }
 
 .tableCell {
