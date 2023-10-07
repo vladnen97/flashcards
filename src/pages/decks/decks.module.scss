@@ -1,0 +1,18 @@
+.title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filters {
+  display: flex;
+  gap: 24px;
+  align-items: flex-end;
+  margin-bottom: 36px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 55px;
+}

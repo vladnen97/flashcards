@@ -48,9 +48,21 @@ export const Head: FC<
     <TableHeader {...rest}>
       <TableRow>
         {columns.map(column => (
-          <TableHead key={column.key} onClick={() => handleSort(column.key, column.sortable)}>
-            {column.title}
-            {sort?.key === column.key && <span>{sort.direction === 'asc' ? '▲' : '▼'}</span>}
+          <TableHead
+            key={column.key}
+            onClick={() => handleSort(column.key, column.sortable)}
+            data-sortable={column.sortable}
+          >
+            <div className={s.headCellContent}>
+              {column.title}
+              {sort?.key === column.key ? (
+                <span aria-label="sort diraction icon">
+                  {sort?.key === column.key && sort.direction === 'asc' ? '▲' : '▼'}
+                </span>
+              ) : (
+                <span style={{ width: '16px' }} aria-label="sort diraction icon"></span>
+              )}
+            </div>
           </TableHead>
         ))}
       </TableRow>

@@ -8,17 +8,19 @@ import s from './tab-switcher.module.scss'
 import { Typography } from 'components/ui/typography'
 
 type TabSwitcherProps = {
-  title: string
+  value: string
+  onValueChange: (value: string) => void
+  label: string
   children: ReactNode
 }
 
-export const TabSwitcher: FC<TabSwitcherProps> = ({ title, children }) => {
+export const TabSwitcher: FC<TabSwitcherProps> = ({ label, children, value, onValueChange }) => {
   return (
     <div>
       <Typography variant="body2" className={s.title}>
-        {title}
+        {label}
       </Typography>
-      <Tabs.Root className={s.tabsRoot} defaultValue="tab1">
+      <Tabs.Root className={s.tabsRoot} value={value} onValueChange={onValueChange}>
         <Tabs.List className={s.tabsList}>{children}</Tabs.List>
       </Tabs.Root>
     </div>
@@ -26,5 +28,5 @@ export const TabSwitcher: FC<TabSwitcherProps> = ({ title, children }) => {
 }
 
 export const TabSwitcherItem: FC<TabsTriggerProps> = props => {
-  return <Tabs.Trigger {...props} />
+  return <Tabs.Trigger className={s.tabsTrigger} {...props} />
 }
