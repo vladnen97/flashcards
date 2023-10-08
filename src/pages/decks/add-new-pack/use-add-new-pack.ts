@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 const createDeckSchema = z.object({
-  deckName: z.string().nonempty('Enter pack name'),
+  name: z.string().nonempty('Enter pack name').min(3).max(30),
   isPrivate: z.boolean().optional(),
 })
 
@@ -14,7 +14,7 @@ export const useAddNewPack = () => {
     mode: 'onSubmit',
     resolver: zodResolver(createDeckSchema),
     defaultValues: {
-      deckName: '',
+      name: '',
       isPrivate: false,
     },
   })

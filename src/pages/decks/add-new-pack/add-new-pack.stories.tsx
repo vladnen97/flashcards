@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import type { Meta } from '@storybook/react'
 
-import { AddNewPack, FormValues } from 'components/modals/add-new-pack'
+import { AddNewPack, FormValues } from '@/pages/decks/add-new-pack/index.ts'
 import Button from 'components/ui/button/button.tsx'
 
 const meta = {
