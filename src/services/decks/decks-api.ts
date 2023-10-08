@@ -8,11 +8,48 @@ const decksApi = baseApi.injectEndpoints({
         method: 'GET',
         params: args,
       }),
+      providesTags: ['Decks'],
+    }),
+    getDeckById: builder.query<Omit<Deck, 'author'>, string>({
+      query: id => ({
+        url: `v1/decks/${id}`,
+        method: 'GET',
+      }),
+      providesTags: ['Decks'],
+    }),
+    createDeck: builder.mutation<Deck, createDeckBody>({
+      query: data => ({
+        url: 'v1/decks',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Decks'],
+    }),
+    deleteDeck: builder.mutation<Omit<Deck, 'author'>, string>({
+      query: id => ({
+        url: `v1/decks/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Decks'],
+    }),
+    updateDeck: builder.mutation<Deck, Partial<createDeckBody> & { id: string }>({
+      query: ({ id, ...body }) => ({
+        url: `v1/decks/${id}`,
+        method: 'PATCH',
+        body,
+      }),
+      invalidatesTags: ['Decks'],
     }),
   }),
 })
 
-export const { useGetDecksQuery } = decksApi
+export const {
+  useGetDecksQuery,
+  useGetDeckByIdQuery,
+  useCreateDeckMutation,
+  useDeleteDeckMutation,
+  useUpdateDeckMutation,
+} = decksApi
 
 type GetDecksArgs = {
   minCardsCount?: number
@@ -22,6 +59,10 @@ type GetDecksArgs = {
   orderBy?: string | null
   currentPage?: number
   itemsPerPage?: string
+}
+type createDeckBody = {
+  name: string
+  isPrivate?: boolean
 }
 
 export type DecksResponse = {
