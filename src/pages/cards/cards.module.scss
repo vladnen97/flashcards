@@ -1,0 +1,45 @@
+.backLink {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+
+  width: 150px;
+  margin-bottom: 33px;
+
+  text-decoration: none;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.input {
+  margin: 24px 0;
+}
+
+.noCards {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: center;
+
+  margin-top: 69px;
+}
+
+.text {
+  color: var(--color-dark-100);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 55px;
+}

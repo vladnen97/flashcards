@@ -1,29 +1,22 @@
-import { useState } from 'react'
-
 import type { Meta } from '@storybook/react'
 
+import { DeleteDeck } from '@/pages/decks/delete-pack/index.ts'
 import { TrashOutline } from 'assets/icons'
-import { DeletePack } from 'components/modals/delete-pack'
 import Button from 'components/ui/button/button.tsx'
 
 const meta = {
   title: 'Components/MODALS/DeletePack',
-  component: DeletePack,
+  component: DeleteDeck,
   tags: ['autodocs'],
-} satisfies Meta<typeof DeletePack>
+} satisfies Meta<typeof DeleteDeck>
 
 export default meta
 
 const DeleteDeckWithHooks = () => {
-  const [open, setOpen] = useState<boolean>(false)
-
-  const handleDelete = () => console.log('Deck deleted')
-
   return (
-    <DeletePack
-      open={open}
-      onClose={() => setOpen(state => !state)}
-      onDelete={handleDelete}
+    <DeleteDeck
+      deckName={'Dark'}
+      deckId={'123456'}
       trigger={
         <Button>
           <TrashOutline /> Delete

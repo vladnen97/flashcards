@@ -6,6 +6,7 @@ import {
   RouterProvider,
 } from 'react-router-dom'
 
+import { Cards } from '@/pages/cards'
 import { Decks } from '@/pages/decks/decks.tsx'
 import { Layout } from 'components/Layout'
 
@@ -20,6 +21,10 @@ const privateRoutes: RouteObject[] = [
   {
     path: '/',
     element: <Decks />,
+  },
+  {
+    path: '/cards/:id',
+    element: <Cards />,
   },
 ]
 

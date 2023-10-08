@@ -1,0 +1,11 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.btnGroup {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 12px;
+}

@@ -1,8 +1,13 @@
 import { useMemo, useState } from 'react'
 
-import { useGetDecksQuery } from '@/services/decks'
+import { Link } from 'react-router-dom'
+
+import { AddNewPack, FormValues } from './add-new-pack'
+import { DeleteDeck } from './delete-pack'
+import { EditDeck } from './edit-deck'
+
+import { useCreateDeckMutation, useGetDecksQuery } from '@/services/decks'
 import { EditOutline, PlayCircleOutline, TrashOutline } from 'assets/icons'
-import { AddNewPack } from 'components/modals/add-new-pack'
 import Button from 'components/ui/button/button.tsx'
 import { Pagination } from 'components/ui/pagination'
 import { Slider } from 'components/ui/slider'
@@ -40,6 +45,7 @@ const columns: Column[] = [
     title: '',
   },
 ]
+const authorId = 'f2be95b9-4d07-4751-a775-bd612fc9553a'
 
 export const Decks = () => {
   const [name, setName] = useState<string>('')
@@ -60,14 +66,24 @@ export const Decks = () => {
     maxCardsCount: cardsCountRange[1],
     orderBy: sortedString,
     itemsPerPage: '13',
-    authorId: showAuthorDeck === 'myDeck' ? 'f2be95b9-4d07-4751-a775-bd612fc9553a' : '',
+    authorId: showAuthorDeck === 'myDeck' ? authorId : '',
     currentPage: page,
   })
+
+  const [createDeck] = useCreateDeckMutation()
 
   const clearFilter = () => {
     setName('')
     setShowAuthorDeck('allDeck')
     setCardsCountRange([0, 100])
+  }
+
+  const handleCreateDeckSubmit = (data: FormValues) => {
+    createDeck(data)
+      .unwrap()
+      .then(() => {
+        setShowModal(false)
+      })
   }
 
   return (
@@ -80,7 +96,7 @@ export const Decks = () => {
           trigger={<Button>Add New Deck</Button>}
           open={showModal}
           onClose={() => setShowModal(state => !state)}
-          onSubmit={data => console.log(data)}
+          onSubmit={handleCreateDeckSubmit}
         />
       </div>
       <div className={s.filters}>
@@ -120,22 +136,39 @@ export const Decks = () => {
           Clear Filter
         </Button>
       </div>
-      {data?.items.length ? (
+      {!!data?.items.length && (
         <Table>
           <Head columns={columns} sort={sort} onSort={setSort} />
           <TableBody>
             {data?.items.map(deck => {
               return (
                 <TableRow key={deck.id}>
-                  <TableCell>{deck.name}</TableCell>
+                  <TableCell>
+                    <Typography as={Link} to={`/cards/${deck.id}`} className={s.deckLink}>
+                      {deck.name}
+                    </Typography>
+                  </TableCell>
                   <TableCell>{deck.cardsCount}</TableCell>
                   <TableCell>{new Date(deck.updated).toLocaleDateString('ru-RU')}</TableCell>
                   <TableCell>{deck.author.name}</TableCell>
                   <TableCell>
                     <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
                       <PlayCircleOutline />
-                      <EditOutline />
-                      <TrashOutline />
+                      {authorId === deck.author.id && (
+                        <>
+                          <EditDeck
+                            deckId={deck.id}
+                            deckName={deck.name}
+                            isPrivateDeck={deck.isPrivate}
+                            trigger={<EditOutline />}
+                          />
+                          <DeleteDeck
+                            deckId={deck.id}
+                            deckName={deck.name}
+                            trigger={<TrashOutline />}
+                          />
+                        </>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -143,10 +176,6 @@ export const Decks = () => {
             })}
           </TableBody>
         </Table>
-      ) : (
-        <Typography variant={'h2'}>
-          No decks with the entered filters were found 😔. Change request parameters
-        </Typography>
       )}
       <div className={s.pagination}>
         <Pagination count={data?.pagination.totalPages || 1} page={page} onChange={setPage} />
