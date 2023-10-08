@@ -28,7 +28,7 @@ export const Dropdown: FC<DropdownProps> = ({ trigger, children }) => {
 export type DropdownItemProps = {
   children?: ReactNode
   disabled?: boolean
-  onSelect?: () => void
+  onSelect?: (event: Event) => void
 }
 
 export const DropdownItem: FC<DropdownItemProps> = ({ children, disabled, onSelect }) => {
