@@ -153,7 +153,9 @@ export const Decks = () => {
                   <TableCell>{deck.author.name}</TableCell>
                   <TableCell>
                     <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-                      <PlayCircleOutline />
+                      <Typography as={Link} to={`/learn/${deck.id}`}>
+                        <PlayCircleOutline />
+                      </Typography>
                       {authorId === deck.author.id && (
                         <>
                           <EditDeck
