@@ -1,5 +1,7 @@
 import { baseApi } from '../base-api.ts'
 
+import { Card } from '@/services/cards'
+
 const decksApi = baseApi.injectEndpoints({
   endpoints: builder => ({
     getDecks: builder.query<DecksResponse, GetDecksArgs>({
@@ -17,7 +19,7 @@ const decksApi = baseApi.injectEndpoints({
       }),
       providesTags: ['Decks'],
     }),
-    createDeck: builder.mutation<Deck, createDeckBody>({
+    createDeck: builder.mutation<Deck, CreateDeckArgs>({
       query: data => ({
         url: 'v1/decks',
         method: 'POST',
@@ -32,13 +34,27 @@ const decksApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Decks'],
     }),
-    updateDeck: builder.mutation<Deck, Partial<createDeckBody> & { id: string }>({
+    updateDeck: builder.mutation<Deck, Partial<CreateDeckArgs> & { id: string }>({
       query: ({ id, ...body }) => ({
         url: `v1/decks/${id}`,
         method: 'PATCH',
         body,
       }),
       invalidatesTags: ['Decks'],
+    }),
+    getLearn: builder.query<Card, GetLearnArgs>({
+      query: ({ id, ...params }) => ({
+        url: `v1/decks/${id}/learn`,
+        method: 'GET',
+        params,
+      }),
+    }),
+    saveGrade: builder.mutation<void, SaveGradeArgs>({
+      query: ({ deckId: id, ...body }) => ({
+        url: `v1/decks/${id}/learn`,
+        method: 'POST',
+        body,
+      }),
     }),
   }),
 })
@@ -49,6 +65,8 @@ export const {
   useCreateDeckMutation,
   useDeleteDeckMutation,
   useUpdateDeckMutation,
+  useGetLearnQuery,
+  useSaveGradeMutation,
 } = decksApi
 
 type GetDecksArgs = {
@@ -60,9 +78,18 @@ type GetDecksArgs = {
   currentPage?: number
   itemsPerPage?: string
 }
-type createDeckBody = {
+type CreateDeckArgs = {
   name: string
   isPrivate?: boolean
+}
+type GetLearnArgs = {
+  id: string
+  previousCardId?: string
+}
+type SaveGradeArgs = {
+  deckId: string
+  cardId: string
+  grade: 0 | 1 | 2 | 3 | 4 | 5
 }
 
 export type DecksResponse = {
