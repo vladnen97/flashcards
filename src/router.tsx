@@ -8,6 +8,7 @@ import {
 
 import { Cards } from '@/pages/cards'
 import { Decks } from '@/pages/decks/decks.tsx'
+import { Learn } from '@/pages/learn'
 import { Layout } from 'components/Layout'
 
 const publicRoutes: RouteObject[] = [
@@ -25,6 +26,10 @@ const privateRoutes: RouteObject[] = [
   {
     path: '/cards/:id',
     element: <Cards />,
+  },
+  {
+    path: '/learn/:id',
+    element: <Learn />,
   },
 ]
 

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 
 import { CreateCard } from '@/pages/cards/create-card-modal'
 import { DeleteCard } from '@/pages/cards/delete-card-modal'
@@ -36,6 +36,7 @@ const columns: Column[] = [
 const authorId = 'f2be95b9-4d07-4751-a775-bd612fc9553a'
 
 export const Cards = () => {
+  const navigate = useNavigate()
   const [search, setSearch] = useState<string>('')
   const [page, setPage] = useState<number>(1)
   const [sort, setSort] = useState<Sort>(null)
@@ -72,7 +73,11 @@ export const Cards = () => {
 
           {isDeckOwner && (
             <Dropdown trigger={<MoreVerticalOutline />}>
-              <DropdownItemWithIcon icon={<PlayCircleOutline />} text={'Learn'} />
+              <DropdownItemWithIcon
+                icon={<PlayCircleOutline />}
+                text={'Learn'}
+                onSelect={() => navigate(`/learn/${deckId}`)}
+              />
               <DropdownItem onSelect={e => e.preventDefault()}>
                 <EditDeck
                   deckId={deckData.id}

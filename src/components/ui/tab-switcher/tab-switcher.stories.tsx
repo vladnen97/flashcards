@@ -25,7 +25,7 @@ const onClickHandler2 = () => {
 
 export const Default: Story = {
   args: {
-    title: 'Show packs cards',
+    label: 'Show pack cards',
     children: (
       <>
         <TabSwitcherItem value={'tab1'} onClick={onClickHandler1} className={s.tabsTrigger}>
@@ -36,5 +36,6 @@ export const Default: Story = {
         </TabSwitcherItem>
       </>
     ),
+    value: 'tab1',
   },
 }
