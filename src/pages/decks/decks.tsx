@@ -65,7 +65,7 @@ export const Decks = () => {
     minCardsCount: cardsCountRange[0],
     maxCardsCount: cardsCountRange[1],
     orderBy: sortedString,
-    itemsPerPage: '13',
+    itemsPerPage: 13,
     authorId: showAuthorDeck === 'myDeck' ? authorId : '',
     currentPage: page,
   })
@@ -75,7 +75,7 @@ export const Decks = () => {
   const clearFilter = () => {
     setName('')
     setShowAuthorDeck('allDeck')
-    setCardsCountRange([0, 100])
+    setCardsCountRange([0, data?.maxCardsCount || 100])
   }
 
   const handleCreateDeckSubmit = (data: FormValues) => {
