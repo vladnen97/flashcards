@@ -1,5 +1,5 @@
 import { baseApi } from '@/services/base-api.ts'
-import { Pagination } from '@/services/decks'
+import { Card, CardRequestArgs, CardsResponse, GetCardsArgs } from '@/services/cards/card-types.ts'
 
 const cardsApi = baseApi.injectEndpoints({
   endpoints: builder => ({
@@ -18,7 +18,7 @@ const cardsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Cards'],
     }),
-    createCard: builder.mutation<Card, CardRequestBody>({
+    createCard: builder.mutation<Card, CardRequestArgs>({
       query: ({ id, ...body }) => ({
         url: `v1/decks/${id}/cards`,
         method: 'POST',
@@ -26,7 +26,7 @@ const cardsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Cards'],
     }),
-    updateCard: builder.mutation<Card, CardRequestBody>({
+    updateCard: builder.mutation<Card, CardRequestArgs>({
       query: ({ id, ...body }) => ({
         url: `v1/cards/${id}`,
         method: 'PATCH',
@@ -43,42 +43,3 @@ export const {
   useCreateCardMutation,
   useUpdateCardMutation,
 } = cardsApi
-
-type GetCardsArgs = {
-  id: string
-  question?: string
-  answer?: string
-  orderBy?: string | null
-  currentPage?: number
-  itemsPerPage?: string
-}
-type CardRequestBody = {
-  id: string
-  question: string
-  answer: string
-  questionImg?: string
-  answerImg?: string
-  questionVideo?: string
-  answerVideo?: string
-}
-
-export type CardsResponse = {
-  pagination: Pagination
-  items: Card[]
-}
-
-export type Card = {
-  id: string
-  question: string
-  answer: string
-  deckId: string
-  questionImg: string | null
-  answerImg: string | null
-  questionVideo: string | null
-  answerVideo: string | null
-  created: string
-  updated: string
-  shots: number
-  grade: number
-  userId: string
-}

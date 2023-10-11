@@ -1,6 +1,16 @@
 import { baseApi } from '../base-api.ts'
 
-import { Card } from '@/services/cards'
+import { Card } from '@/services/cards/card-types.ts'
+import {
+  CreateDeckArgs,
+  Deck,
+  DecksResponse,
+  DeckWithAuthor,
+  GetDecksArgs,
+  GetLearnArgs,
+  SaveGradeArgs,
+  UpdateDeckArgs,
+} from '@/services/decks/deck-types.ts'
 
 const decksApi = baseApi.injectEndpoints({
   endpoints: builder => ({
@@ -12,14 +22,14 @@ const decksApi = baseApi.injectEndpoints({
       }),
       providesTags: ['Decks'],
     }),
-    getDeckById: builder.query<Omit<Deck, 'author'>, string>({
+    getDeckById: builder.query<Deck, string>({
       query: id => ({
         url: `v1/decks/${id}`,
         method: 'GET',
       }),
       providesTags: ['Decks'],
     }),
-    createDeck: builder.mutation<Deck, CreateDeckArgs>({
+    createDeck: builder.mutation<DeckWithAuthor, CreateDeckArgs>({
       query: data => ({
         url: 'v1/decks',
         method: 'POST',
@@ -27,14 +37,14 @@ const decksApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Decks'],
     }),
-    deleteDeck: builder.mutation<Omit<Deck, 'author'>, string>({
+    deleteDeck: builder.mutation<Deck, string>({
       query: id => ({
         url: `v1/decks/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Decks'],
     }),
-    updateDeck: builder.mutation<Deck, Partial<CreateDeckArgs> & { id: string }>({
+    updateDeck: builder.mutation<DeckWithAuthor, UpdateDeckArgs>({
       query: ({ id, ...body }) => ({
         url: `v1/decks/${id}`,
         method: 'PATCH',
@@ -55,6 +65,7 @@ const decksApi = baseApi.injectEndpoints({
         method: 'POST',
         body,
       }),
+      invalidatesTags: ['Cards'],
     }),
   }),
 })
@@ -68,57 +79,3 @@ export const {
   useGetLearnQuery,
   useSaveGradeMutation,
 } = decksApi
-
-type GetDecksArgs = {
-  minCardsCount?: number
-  maxCardsCount?: number
-  name?: string
-  authorId?: string
-  orderBy?: string | null
-  currentPage?: number
-  itemsPerPage?: string
-}
-type CreateDeckArgs = {
-  name: string
-  isPrivate?: boolean
-}
-type GetLearnArgs = {
-  id: string
-  previousCardId?: string
-}
-type SaveGradeArgs = {
-  deckId: string
-  cardId: string
-  grade: 0 | 1 | 2 | 3 | 4 | 5
-}
-
-export type DecksResponse = {
-  maxCardsCount: number
-  pagination: Pagination
-  items: Deck[]
-}
-export type Pagination = {
-  totalPages: number
-  currentPage: number
-  itemsPerPage: number
-  totalItems: number
-}
-export type Author = {
-  id: string
-  name: string
-}
-export type Deck = {
-  id: string
-  userId: Author['id']
-  name: string
-  isPrivate: boolean
-  shots: number
-  cover: string | null
-  rating: number
-  isDeleted: boolean | null
-  isBlocked: boolean | null
-  created: string
-  updated: string
-  cardsCount: number
-  author: Author
-}
