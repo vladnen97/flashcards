@@ -50,7 +50,7 @@ export const Cards = () => {
   const { data: deckData, isLoading } = useGetDeckByIdQuery(deckId || '')
   const { data: cardsData } = useGetCardsQuery({
     id: deckId || '',
-    itemsPerPage: '12',
+    itemsPerPage: 12,
     question: search,
     orderBy: sortedString,
     currentPage: page,
@@ -110,7 +110,9 @@ export const Cards = () => {
         {!!cardsData?.items.length && isDeckOwner && (
           <CreateCard deckId={deckId || ''} trigger={<Button>Add New Card</Button>} />
         )}
-        {!!cardsData?.items.length && !isDeckOwner && <Button>Learn to Deck</Button>}
+        {!!cardsData?.items.length && !isDeckOwner && (
+          <Button onClick={() => navigate(`/learn/${deckId}`)}>Learn to Deck</Button>
+        )}
       </div>
       <div className={s.input}>
         <TextField
