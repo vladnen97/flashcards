@@ -1,8 +1,7 @@
-import { ReactNode, useState } from 'react'
+import { ReactNode } from 'react'
 
 import s from '@/pages/decks/add-new-pack/add-new-pack.module.scss'
-import { useEditDeck, FormValues } from '@/pages/decks/edit-deck/index.ts'
-import { useUpdateDeckMutation } from '@/services/decks'
+import { useEditDeck } from '@/pages/decks/edit-deck/index.ts'
 import Button from 'components/ui/button/button.tsx'
 import { ControlledCheckbox, ControlledTextField } from 'components/ui/controlled'
 import { Modal } from 'components/ui/modal'
@@ -15,17 +14,11 @@ type Props = {
 }
 
 export const EditDeck = (props: Props) => {
-  const [open, setOpen] = useState<boolean>(false)
-  const { handleSubmit, control } = useEditDeck(props.deckName, props.isPrivateDeck)
-  const [updateDeck] = useUpdateDeckMutation()
-
-  const handleUpdateDeckSubmit = (data: FormValues) => {
-    updateDeck({ ...data, id: props.deckId })
-      .unwrap()
-      .then(() => {
-        setOpen(false)
-      })
-  }
+  const { open, setOpen, handleSubmit, control, handleUpdateDeckSubmit } = useEditDeck(
+    props.deckName,
+    props.isPrivateDeck,
+    props.deckId
+  )
 
   return (
     <Modal
