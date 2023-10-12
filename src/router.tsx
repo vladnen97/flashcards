@@ -7,9 +7,9 @@ import {
 } from 'react-router-dom'
 
 import { Cards } from '@/pages/cards'
-import { Decks } from '@/pages/decks/decks.tsx'
+import { Decks } from '@/pages/decks'
 import { Learn } from '@/pages/learn'
-import { Layout } from 'components/Layout'
+import { Layout } from 'components/layout'
 
 const publicRoutes: RouteObject[] = [
   {
