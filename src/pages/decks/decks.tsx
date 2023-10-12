@@ -2,12 +2,12 @@ import { useMemo, useState } from 'react'
 
 import { Link } from 'react-router-dom'
 
-import { AddNewPack, FormValues } from './add-new-pack'
+import { AddNewPack } from './add-new-pack'
 import { DeleteDeck } from './delete-pack'
 import { EditDeck } from './edit-deck'
 
 import { useDebounce } from '@/common/hooks/useDebounce.ts'
-import { useCreateDeckMutation, useGetDecksQuery } from '@/services/decks'
+import { useGetDecksQuery } from '@/services/decks'
 import { EditOutline, PlayCircleOutline, TrashOutline } from 'assets/icons'
 import Button from 'components/ui/button/button.tsx'
 import { Pagination } from 'components/ui/pagination'
@@ -55,7 +55,6 @@ export const Decks = () => {
   const debouncedCardsRange = useDebounce(cardsCountRange, 800)
   const [page, setPage] = useState<number>(1)
   const [showAuthorDeck, setShowAuthorDeck] = useState<'myDeck' | 'allDeck'>('allDeck')
-  const [showModal, setShowModal] = useState<boolean>(false)
   const [sort, setSort] = useState<Sort>(null)
   const sortedString = useMemo(() => {
     if (!sort) return null
@@ -73,20 +72,10 @@ export const Decks = () => {
     currentPage: page,
   })
 
-  const [createDeck] = useCreateDeckMutation()
-
   const clearFilter = () => {
     setName('')
     setShowAuthorDeck('allDeck')
     setCardsCountRange([0, data?.maxCardsCount || 100])
-  }
-
-  const handleCreateDeckSubmit = (data: FormValues) => {
-    createDeck(data)
-      .unwrap()
-      .then(() => {
-        setShowModal(false)
-      })
   }
 
   return (
@@ -95,12 +84,7 @@ export const Decks = () => {
         <Typography variant={'large'} as={'h1'}>
           Decks list
         </Typography>
-        <AddNewPack
-          trigger={<Button>Add New Deck</Button>}
-          open={showModal}
-          onClose={() => setShowModal(state => !state)}
-          onSubmit={handleCreateDeckSubmit}
-        />
+        <AddNewPack trigger={<Button>Add New Deck</Button>} />
       </div>
       <div className={s.filters}>
         <TextField
