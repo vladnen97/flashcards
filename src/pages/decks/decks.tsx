@@ -73,8 +73,6 @@ export const Decks = () => {
     currentPage: page,
   })
 
-  console.log('перерисовка')
-
   const [createDeck] = useCreateDeckMutation()
 
   const clearFilter = () => {
