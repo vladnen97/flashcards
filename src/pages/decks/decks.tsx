@@ -6,6 +6,7 @@ import { AddNewPack, FormValues } from './add-new-pack'
 import { DeleteDeck } from './delete-pack'
 import { EditDeck } from './edit-deck'
 
+import { useDebounce } from '@/common/hooks/useDebounce.ts'
 import { useCreateDeckMutation, useGetDecksQuery } from '@/services/decks'
 import { EditOutline, PlayCircleOutline, TrashOutline } from 'assets/icons'
 import Button from 'components/ui/button/button.tsx'
@@ -49,10 +50,12 @@ const authorId = 'f2be95b9-4d07-4751-a775-bd612fc9553a'
 
 export const Decks = () => {
   const [name, setName] = useState<string>('')
+  const debouncedSearchValue = useDebounce(name, 800)
+  const [cardsCountRange, setCardsCountRange] = useState<number[]>([0, 100])
+  const debouncedCardsRange = useDebounce(cardsCountRange, 800)
   const [page, setPage] = useState<number>(1)
   const [showAuthorDeck, setShowAuthorDeck] = useState<'myDeck' | 'allDeck'>('allDeck')
   const [showModal, setShowModal] = useState<boolean>(false)
-  const [cardsCountRange, setCardsCountRange] = useState<number[]>([0, 100])
   const [sort, setSort] = useState<Sort>(null)
   const sortedString = useMemo(() => {
     if (!sort) return null
@@ -61,14 +64,16 @@ export const Decks = () => {
   }, [sort])
 
   const { data } = useGetDecksQuery({
-    name,
-    minCardsCount: cardsCountRange[0],
-    maxCardsCount: cardsCountRange[1],
+    name: debouncedSearchValue,
+    minCardsCount: debouncedCardsRange[0],
+    maxCardsCount: debouncedCardsRange[1],
     orderBy: sortedString,
     itemsPerPage: 13,
     authorId: showAuthorDeck === 'myDeck' ? authorId : '',
     currentPage: page,
   })
+
+  console.log('перерисовка')
 
   const [createDeck] = useCreateDeckMutation()
 
