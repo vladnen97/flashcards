@@ -2,9 +2,8 @@ import { useMemo, useState } from 'react'
 
 import { Link } from 'react-router-dom'
 
-import { AddNewPack } from './add-new-pack'
-import { DeleteDeck } from './delete-pack'
-import { EditDeck } from './edit-deck'
+import { CreateUpdateDeckModal } from './create-update-deck-modal'
+import { DeleteDeckModal } from './delete-deck-modal'
 
 import { useDebounce } from '@/common/hooks/useDebounce.ts'
 import { useGetDecksQuery } from '@/services/decks'
@@ -84,7 +83,7 @@ export const Decks = () => {
         <Typography variant={'large'} as={'h1'}>
           Decks list
         </Typography>
-        <AddNewPack trigger={<Button>Add New Deck</Button>} />
+        <CreateUpdateDeckModal trigger={<Button>Add New Deck</Button>} />
       </div>
       <div className={s.filters}>
         <TextField
@@ -145,13 +144,14 @@ export const Decks = () => {
                       </Typography>
                       {authorId === deck.author.id && (
                         <>
-                          <EditDeck
+                          <CreateUpdateDeckModal
+                            isUpdate
                             deckId={deck.id}
                             deckName={deck.name}
                             isPrivateDeck={deck.isPrivate}
                             trigger={<EditOutline />}
                           />
-                          <DeleteDeck
+                          <DeleteDeckModal
                             deckId={deck.id}
                             deckName={deck.name}
                             trigger={<TrashOutline />}
