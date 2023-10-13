@@ -15,7 +15,7 @@ type Props = {
   deckName: string
   trigger: ReactNode
 }
-export const DeleteDeck = (props: Props) => {
+export const DeleteDeckModal = (props: Props) => {
   const [open, setOpen] = useState<boolean>(false)
   const navigate = useNavigate()
   const [deleteDeck] = useDeleteDeckMutation()
