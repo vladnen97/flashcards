@@ -2,11 +2,10 @@ import { useMemo, useState } from 'react'
 
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
-import { CreateCard } from '@/pages/cards/create-card-modal'
+import { CreateUpdateCardModal } from '@/pages/cards/create-update-card-modal'
 import { DeleteCard } from '@/pages/cards/delete-card-modal'
-import { UpdateCard } from '@/pages/cards/update-card-modal'
-import { DeleteDeck } from '@/pages/decks/delete-pack'
-import { EditDeck } from '@/pages/decks/edit-deck'
+import { CreateUpdateDeckModal } from '@/pages/decks/create-update-deck-modal'
+import { DeleteDeckModal } from '@/pages/decks/delete-deck-modal'
 import { useGetCardsQuery } from '@/services/cards'
 import { useGetDeckByIdQuery } from '@/services/decks'
 import {
@@ -79,7 +78,8 @@ export const Cards = () => {
                 onSelect={() => navigate(`/learn/${deckId}`)}
               />
               <DropdownItem onSelect={e => e.preventDefault()}>
-                <EditDeck
+                <CreateUpdateDeckModal
+                  isUpdate
                   deckId={deckData.id}
                   deckName={deckData.name}
                   isPrivateDeck={deckData.isPrivate}
@@ -92,7 +92,7 @@ export const Cards = () => {
                 />
               </DropdownItem>
               <DropdownItem onSelect={e => e.preventDefault()}>
-                <DeleteDeck
+                <DeleteDeckModal
                   deckId={deckId || ''}
                   deckName={deckData.name}
                   trigger={
@@ -108,7 +108,7 @@ export const Cards = () => {
         </div>
 
         {!!cardsData?.items.length && isDeckOwner && (
-          <CreateCard deckId={deckId || ''} trigger={<Button>Add New Card</Button>} />
+          <CreateUpdateCardModal deckId={deckId || ''} trigger={<Button>Add New Card</Button>} />
         )}
         {!!cardsData?.items.length && !isDeckOwner && (
           <Button onClick={() => navigate(`/learn/${deckId}`)}>Learn to Deck</Button>
@@ -129,7 +129,7 @@ export const Cards = () => {
             This pack is empty. {isDeckOwner && 'Click add new card to fill this pack'}
           </Typography>
           {isDeckOwner && (
-            <CreateCard deckId={deckId || ''} trigger={<Button>Add New Card</Button>} />
+            <CreateUpdateCardModal deckId={deckId || ''} trigger={<Button>Add New Card</Button>} />
           )}
         </div>
       ) : (
@@ -146,7 +146,9 @@ export const Cards = () => {
                   <TableCell>
                     {isDeckOwner && (
                       <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-                        <UpdateCard
+                        <CreateUpdateCardModal
+                          isUpdate
+                          deckId={card.deckId}
                           cardId={card.id}
                           cardQuestion={card.question}
                           cardAnswer={card.answer}
