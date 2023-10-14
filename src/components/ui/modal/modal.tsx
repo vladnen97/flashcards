@@ -9,8 +9,8 @@ import { Typography } from 'components/ui/typography'
 
 type ModalProps = {
   open: boolean
-  onClose: () => void
-  trigger: ReactNode
+  onClose: (value: boolean) => void
+  trigger?: ReactNode
   title?: string
 } & ComponentProps<'div'>
 
@@ -23,8 +23,8 @@ export const Modal: FC<ModalProps> = ({
   className,
 }) => {
   return (
-    <DialogRadix.Root open={open} onOpenChange={() => onClose?.()}>
-      <DialogRadix.Trigger asChild>{trigger}</DialogRadix.Trigger>
+    <DialogRadix.Root open={open} onOpenChange={onClose}>
+      {trigger && <DialogRadix.Trigger asChild>{trigger}</DialogRadix.Trigger>}
       <DialogRadix.Portal>
         <DialogRadix.Overlay className={s.DialogOverlay}>
           <DialogRadix.Content className={s.DialogContent}>

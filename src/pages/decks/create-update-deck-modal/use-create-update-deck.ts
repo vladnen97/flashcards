@@ -13,18 +13,11 @@ const createDeckSchema = z.object({
 
 export type FormValues = z.infer<typeof createDeckSchema>
 type UseAddNewPackProps = {
-  deckId?: string
   deckName?: string
   isPrivateDeck?: boolean
-  isUpdate?: boolean
 }
 
-export const useCreateUpdateDeck = ({
-  isUpdate,
-  deckId,
-  isPrivateDeck,
-  deckName,
-}: UseAddNewPackProps) => {
+export const useCreateUpdateDeck = ({ isPrivateDeck, deckName }: UseAddNewPackProps) => {
   const [open, setOpen] = useState<boolean>(false)
   const [createDeck] = useCreateDeckMutation()
   const [updateDeck] = useUpdateDeckMutation()
@@ -37,21 +30,5 @@ export const useCreateUpdateDeck = ({
     },
   })
 
-  const handleDeckSubmit = (data: FormValues) => {
-    if (isUpdate) {
-      updateDeck({ ...data, id: deckId || '' })
-        .unwrap()
-        .then(() => {
-          setOpen(false)
-        })
-    } else {
-      createDeck(data)
-        .unwrap()
-        .then(() => {
-          setOpen(false)
-        })
-    }
-  }
-
-  return { open, setOpen, handleSubmit, control, handleDeckSubmit }
+  return { open, setOpen, handleSubmit, control, updateDeck, createDeck }
 }
