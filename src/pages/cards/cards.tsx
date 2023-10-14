@@ -2,12 +2,15 @@ import { useMemo, useState } from 'react'
 
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
+import { useDebounce } from '@/common/hooks/useDebounce.ts'
 import { CreateUpdateCardModal } from '@/pages/cards/create-update-card-modal'
 import { DeleteCard } from '@/pages/cards/delete-card-modal'
 import { CreateUpdateDeckModal } from '@/pages/decks/create-update-deck-modal'
 import { DeleteDeckModal } from '@/pages/decks/delete-deck-modal'
 import { useGetCardsQuery } from '@/services/cards'
+import { cardsSlice } from '@/services/cards/cards-slice.ts'
 import { useGetDeckByIdQuery } from '@/services/decks'
+import { useAppDispatch, useAppSelector } from '@/services/store.ts'
 import {
   ArrowBackOutline,
   EditOutline,
@@ -35,24 +38,40 @@ const columns: Column[] = [
 const authorId = 'f2be95b9-4d07-4751-a775-bd612fc9553a'
 
 export const Cards = () => {
+  const searchByQuestion = useAppSelector(state => state.cardsSlice.searchByQuestion)
+  const debouncedSearchByQuestion = useDebounce(searchByQuestion, 800)
+  const orderBy = useAppSelector(state => state.cardsSlice.orderBy)
+  const currentPage = useAppSelector(state => state.cardsSlice.currentPage)
+  const itemsPerPage = useAppSelector(state => state.cardsSlice.itemsPerPage)
+  const [open, setOpen] = useState<boolean>(false)
+
+  const dispatch = useAppDispatch()
+
+  const setSearchByQuestion = (value: string) => {
+    dispatch(cardsSlice.actions.setSearchByQuestion(value))
+  }
+  const setOrderBy = (value: Sort) => {
+    dispatch(cardsSlice.actions.setOrderBy(value))
+  }
+  const setCurrentPage = (value: number) => {
+    dispatch(cardsSlice.actions.setCurrentPage(value))
+  }
+
   const navigate = useNavigate()
-  const [search, setSearch] = useState<string>('')
-  const [page, setPage] = useState<number>(1)
-  const [sort, setSort] = useState<Sort>(null)
   const { id: deckId } = useParams<{ id: string }>()
   const sortedString = useMemo(() => {
-    if (!sort) return null
+    if (!orderBy) return null
 
-    return `${sort.key}-${sort.direction}`
-  }, [sort])
+    return `${orderBy.key}-${orderBy.direction}`
+  }, [orderBy])
 
   const { data: deckData, isLoading } = useGetDeckByIdQuery(deckId || '')
   const { data: cardsData } = useGetCardsQuery({
     id: deckId || '',
-    itemsPerPage: 12,
-    question: search,
+    itemsPerPage,
+    question: debouncedSearchByQuestion,
     orderBy: sortedString,
-    currentPage: page,
+    currentPage,
   })
 
   const isDeckOwner = deckData?.userId === authorId
@@ -71,39 +90,40 @@ export const Cards = () => {
           </Typography>
 
           {isDeckOwner && (
-            <Dropdown trigger={<MoreVerticalOutline />}>
-              <DropdownItemWithIcon
-                icon={<PlayCircleOutline />}
-                text={'Learn'}
-                onSelect={() => navigate(`/learn/${deckId}`)}
+            <>
+              <Dropdown trigger={<MoreVerticalOutline />}>
+                <DropdownItemWithIcon
+                  icon={<PlayCircleOutline />}
+                  text={'Learn'}
+                  onSelect={() => navigate(`/learn/${deckId}`)}
+                />
+                <DropdownItemWithIcon
+                  icon={<EditOutline />}
+                  text={'Edit'}
+                  onSelect={() => setOpen(true)}
+                />
+                <DropdownItem onSelect={e => e.preventDefault()}>
+                  <DeleteDeckModal
+                    deckId={deckId || ''}
+                    deckName={deckData.name}
+                    trigger={
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <TrashOutline />
+                        <Typography variant="caption">Delete</Typography>
+                      </div>
+                    }
+                  />
+                </DropdownItem>
+              </Dropdown>
+              <CreateUpdateDeckModal
+                openModal={open}
+                setOpenModal={setOpen}
+                isUpdate
+                deckId={deckData.id}
+                deckName={deckData.name}
+                isPrivateDeck={deckData.isPrivate}
               />
-              <DropdownItem onSelect={e => e.preventDefault()}>
-                <CreateUpdateDeckModal
-                  isUpdate
-                  deckId={deckData.id}
-                  deckName={deckData.name}
-                  isPrivateDeck={deckData.isPrivate}
-                  trigger={
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <EditOutline />
-                      <Typography variant="caption">Edit</Typography>
-                    </div>
-                  }
-                />
-              </DropdownItem>
-              <DropdownItem onSelect={e => e.preventDefault()}>
-                <DeleteDeckModal
-                  deckId={deckId || ''}
-                  deckName={deckData.name}
-                  trigger={
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <TrashOutline />
-                      <Typography variant="caption">Delete</Typography>
-                    </div>
-                  }
-                />
-              </DropdownItem>
-            </Dropdown>
+            </>
           )}
         </div>
 
@@ -116,10 +136,10 @@ export const Cards = () => {
       </div>
       <div className={s.input}>
         <TextField
-          value={search}
-          onChange={e => setSearch(e.target.value)}
+          value={searchByQuestion}
+          onChange={e => setSearchByQuestion(e.target.value)}
           search
-          onClearClick={() => setSearch('')}
+          onClearClick={() => setSearchByQuestion('')}
         />
       </div>
 
@@ -134,7 +154,7 @@ export const Cards = () => {
         </div>
       ) : (
         <Table>
-          <Head columns={columns} sort={sort} onSort={setSort} />
+          <Head columns={columns} sort={orderBy} onSort={setOrderBy} />
           <TableBody>
             {cardsData?.items.map(card => {
               return (
@@ -169,7 +189,11 @@ export const Cards = () => {
         </Table>
       )}
       <div className={s.pagination}>
-        <Pagination count={cardsData?.pagination.totalPages || 1} page={page} onChange={setPage} />
+        <Pagination
+          count={cardsData?.pagination.totalPages || 1}
+          page={currentPage}
+          onChange={setCurrentPage}
+        />
       </div>
     </>
   )
