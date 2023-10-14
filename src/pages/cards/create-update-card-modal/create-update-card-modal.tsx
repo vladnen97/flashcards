@@ -15,7 +15,7 @@ type Props = {
   cardQuestion?: string
   cardAnswer?: string
   isUpdate?: boolean
-  trigger: ReactNode
+  trigger?: ReactNode
 }
 export const CreateUpdateCardModal = ({
   cardId,
@@ -36,7 +36,7 @@ export const CreateUpdateCardModal = ({
   return (
     <Modal
       open={open}
-      onClose={() => setOpen(state => !state)}
+      onClose={setOpen}
       trigger={trigger}
       title={isUpdate ? 'Edit Card' : 'Add New Card'}
     >
