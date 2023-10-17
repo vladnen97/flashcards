@@ -35,7 +35,7 @@ const columns: Column[] = [
   { key: 'grade', sortable: true, title: 'Grade' },
   { key: 'actions', sortable: false, title: '' },
 ]
-const authorId = 'f2be95b9-4d07-4751-a775-bd612fc9553a'
+const authorId = 'adc039be-37db-4b2b-9b9f-0ae24920336b'
 
 export const Cards = () => {
   const searchByQuestion = useAppSelector(state => state.cardsSlice.searchByQuestion)

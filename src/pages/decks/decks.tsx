@@ -47,7 +47,7 @@ const columns: Column[] = [
     title: '',
   },
 ]
-const authorIdConst = 'f2be95b9-4d07-4751-a775-bd612fc9553a'
+const authorIdConst = 'adc039be-37db-4b2b-9b9f-0ae24920336b'
 
 export const Decks = () => {
   const dispatch = useAppDispatch()

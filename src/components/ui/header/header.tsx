@@ -13,7 +13,7 @@ import s from './header.module.scss'
 
 export type HeaderProps = {
   userData: {
-    avatar: string
+    avatar: string | null
     email: string
     name: string
   } | null
@@ -28,7 +28,7 @@ export const Header: FC<HeaderProps> = ({ userData, onSignOut }) => {
       <Link to={'/'} className={s.logo}>
         <Logo />
       </Link>
-      {!userData && <Button>Sign In</Button>}
+      {!userData && <Button onClick={() => navigate('sign-in')}>Sign In</Button>}
       {userData && (
         <Dropdown
           trigger={
@@ -36,12 +36,18 @@ export const Header: FC<HeaderProps> = ({ userData, onSignOut }) => {
               <Typography as={'div'} variant={'subtitle1'} className={s.userName}>
                 {userData.name}
               </Typography>
-              <Avatar src={userData.avatar} name={userData.name} />
+              <Avatar
+                src={userData.avatar || 'https://placehold.jp/200x200.png'}
+                name={userData.name}
+              />
             </button>
           }
         >
           <DropdownItem disabled>
-            <Avatar src={userData.avatar} name={userData.name} />
+            <Avatar
+              src={userData.avatar || 'https://placehold.jp/200x200.png'}
+              name={userData.name}
+            />
             <div>
               <Typography as={'div'} variant={'subtitle2'}>
                 {userData.name}
