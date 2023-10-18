@@ -9,18 +9,9 @@ export const Layout = () => {
   const { data } = useMeQuery()
   const [logout] = useLogoutMutation()
 
-  let userData = null
-
-  if (data) {
-    userData = { name: '', email: '', avatar: null as string | null }
-    userData.name = data.name
-    userData.email = data.email
-    userData.avatar = data.avatar
-  }
-
   return (
     <>
-      <Header userData={userData} onSignOut={logout} />
+      <Header userData={data} onSignOut={logout} />
       <main className={s.container}>
         <Outlet />
       </main>
