@@ -9,7 +9,11 @@ import {
 import { Cards } from '@/pages/cards'
 import { Decks } from '@/pages/decks'
 import { Learn } from '@/pages/learn'
+import { ProfilePage } from '@/pages/profile'
+import { RecoverPasswordPage } from '@/pages/recover-password'
+import { ResetPassword } from '@/pages/reset-password'
 import { SignInPage } from '@/pages/sign-in'
+import { SignUpPage } from '@/pages/sign-up-page'
 import { useMeQuery } from '@/services/auth/auth-api.ts'
 import { Layout } from 'components/layout'
 
@@ -20,7 +24,15 @@ const publicRoutes: RouteObject[] = [
   },
   {
     path: '/sign-up',
-    element: <div>Sign up</div>,
+    element: <SignUpPage />,
+  },
+  {
+    path: '/recover-password',
+    element: <RecoverPasswordPage />,
+  },
+  {
+    path: '/reset-password/:token',
+    element: <ResetPassword />,
   },
 ]
 
@@ -36,6 +48,10 @@ const privateRoutes: RouteObject[] = [
   {
     path: '/learn/:id',
     element: <Learn />,
+  },
+  {
+    path: '/profile',
+    element: <ProfilePage />,
   },
 ]
 

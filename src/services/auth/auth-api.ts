@@ -2,7 +2,7 @@ import { baseApi } from '../base-api.ts'
 
 const authApi = baseApi.injectEndpoints({
   endpoints: builder => ({
-    me: builder.query<User, void>({
+    me: builder.query<MeResponse, void>({
       query: () => ({
         url: `v1/auth/me`,
         method: 'GET',
@@ -24,20 +24,63 @@ const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Me'],
     }),
+    signUp: builder.mutation<SignUpResponse, SignUpArgs>({
+      query: body => ({
+        url: 'v1/auth/sign-up',
+        method: 'POST',
+        body,
+      }),
+    }),
+    recoverPassword: builder.mutation<void, RecoverPasswordArgs>({
+      query: body => ({
+        url: 'v1/auth/recover-password',
+        method: 'POST',
+        body,
+      }),
+    }),
+    resetPassword: builder.mutation<void, ResetPasswordArgs>({
+      query: ({ token, ...body }) => ({
+        url: `v1/auth/reset-password/${token}`,
+        method: 'POST',
+        body,
+      }),
+    }),
   }),
 })
 
-export const { useLoginMutation, useMeQuery, useLogoutMutation } = authApi
+export const {
+  useLoginMutation,
+  useMeQuery,
+  useLogoutMutation,
+  useSignUpMutation,
+  useRecoverPasswordMutation,
+  useResetPasswordMutation,
+} = authApi
 
 type LoginArgs = {
   email: string
   password: string
   rememberMe?: boolean
 }
+type SignUpArgs = {
+  name: string
+  email: string
+  password: string
+}
+type RecoverPasswordArgs = {
+  html: string
+  email: string
+}
+type ResetPasswordArgs = {
+  token: string
+  password: string
+}
 
 type LoginResponse = {
   accessToken: string
 }
+type MeResponse = User | null
+type SignUpResponse = Pick<User, 'id' | 'email' | 'name'>
 
 type User = {
   avatar: string | null

@@ -12,7 +12,7 @@ import { Typography } from 'components/ui/typography'
 import s from './header.module.scss'
 
 export type HeaderProps = {
-  userData: {
+  userData?: {
     avatar: string | null
     email: string
     name: string

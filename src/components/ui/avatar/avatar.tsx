@@ -4,7 +4,7 @@ import s from '../avatar/avatar.module.scss'
 
 type Props = {
   src: string
-  name: string
+  name?: string
   size?: number
 }
 
