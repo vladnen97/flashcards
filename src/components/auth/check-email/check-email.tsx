@@ -1,11 +1,8 @@
 import { FC } from 'react'
 
-import { Link } from 'react-router-dom'
-
 import s from './check-email.module.scss'
 
 import CheskEmail from 'assets/icons/chesk-email.tsx'
-import Button from 'components/ui/button/button.tsx'
 import { Card } from 'components/ui/card'
 import { Typography } from 'components/ui/typography'
 
@@ -18,13 +15,14 @@ export const CheckEmail: FC<CheckEmailProps> = ({ email }) => {
         Check Email
       </Typography>
       <CheskEmail className={s.emailImage} />
-      <Typography
-        variant="body2"
-        className={s.description}
-      >{`We’ve sent an Email with instructions to ${email}`}</Typography>
-      <Button as={Link} to={''} fullWidth>
-        <Typography variant="body2">Back to Sign in</Typography>
-      </Button>
+      <Typography variant="body2" className={s.description}>
+        {`We’ve sent an Email with instructions to ${email}`}
+        <br />
+        Now this page can be closed.
+      </Typography>
+      {/*<Button as={Link} to={'/sign-in'} fullWidth>*/}
+      {/*  <Typography variant="body2">Back to Sign in</Typography>*/}
+      {/*</Button>*/}
     </Card>
   )
 }
