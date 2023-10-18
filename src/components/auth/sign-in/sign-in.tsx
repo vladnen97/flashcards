@@ -13,6 +13,7 @@ import s from './sign-in.module.scss'
 
 type Props = {
   onSubmit: (data: FormValues) => void
+  isSubmitting: boolean
 }
 
 export const SignIn = (props: Props) => {
@@ -45,7 +46,7 @@ export const SignIn = (props: Props) => {
         <Typography variant={'link1'} as={Link} to="/recover-password" className={s.forgotPassLink}>
           Forgot Password?
         </Typography>
-        <Button fullWidth type={'submit'}>
+        <Button fullWidth type={'submit'} disabled={props.isSubmitting}>
           <Typography variant={'subtitle2'}>Sign In</Typography>
         </Button>
       </form>
