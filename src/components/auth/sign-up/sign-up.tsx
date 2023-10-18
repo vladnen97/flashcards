@@ -21,14 +21,15 @@ export const SignUp = (props: Props) => {
     mode: 'onSubmit',
     resolver: zodResolver(signUpSchema),
     defaultValues: {
+      name: '',
       email: '',
       password: '',
       confirmPassword: '',
     },
   })
 
-  const handleFormSubmit = handleSubmit(({ email, password }) => {
-    props.onSubmit({ email, password })
+  const handleFormSubmit = handleSubmit(({ email, password, name }) => {
+    props.onSubmit({ email, password, name })
   })
 
   return (
@@ -38,6 +39,7 @@ export const SignUp = (props: Props) => {
       </Typography>
       <form onSubmit={handleFormSubmit}>
         <div className={s.fields}>
+          <ControlledTextField name={'name'} control={control} label={'Name'} />
           <ControlledTextField name={'email'} control={control} label={'Email'} type={'email'} />
           <ControlledTextField
             name={'password'}
