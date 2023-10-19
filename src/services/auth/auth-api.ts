@@ -45,6 +45,14 @@ const authApi = baseApi.injectEndpoints({
         body,
       }),
     }),
+    updateProfile: builder.mutation<User, UpdateProfileArgs>({
+      query: body => ({
+        url: 'v1/auth/me',
+        method: 'PATCH',
+        body,
+      }),
+      invalidatesTags: ['Me'],
+    }),
   }),
 })
 
@@ -55,6 +63,7 @@ export const {
   useSignUpMutation,
   useRecoverPasswordMutation,
   useResetPasswordMutation,
+  useUpdateProfileMutation,
 } = authApi
 
 type LoginArgs = {
@@ -74,6 +83,10 @@ type RecoverPasswordArgs = {
 type ResetPasswordArgs = {
   token: string
   password: string
+}
+type UpdateProfileArgs = {
+  avatar?: string
+  name: string
 }
 
 type LoginResponse = {

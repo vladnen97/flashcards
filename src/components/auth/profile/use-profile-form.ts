@@ -3,18 +3,19 @@ import { useForm } from 'react-hook-form'
 import z from 'zod'
 
 const ProfileSchema = z.object({
-  nickName: z.string().trim().nonempty('Enter your name'),
+  nickName: z.string().trim().nonempty('Enter your name').min(3),
 })
 
 export type ProfileSchemaType = z.infer<typeof ProfileSchema>
 
-type OnSubmitType = (data: ProfileSchemaType) => void
-
-export const useProfileForm = (onSubmit: OnSubmitType) => {
-  const { handleSubmit, ...rest } = useForm<ProfileSchemaType>({
+export const useProfileForm = ({ name }: { name: string }) => {
+  const { handleSubmit, control } = useForm<ProfileSchemaType>({
     resolver: zodResolver(ProfileSchema),
     mode: 'onSubmit',
+    defaultValues: {
+      nickName: name,
+    },
   })
 
-  return { handleSubmit: handleSubmit(onSubmit), ...rest }
+  return { handleSubmit, control }
 }
