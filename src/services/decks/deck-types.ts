@@ -14,7 +14,7 @@ export type CreateDeckArgs = {
   name: string
   isPrivate?: boolean
 }
-export type UpdateDeckArgs = Partial<CreateDeckArgs> & { id: string }
+export type UpdateDeckArgs = CreateDeckArgs & { id: string }
 export type GetLearnArgs = {
   id: string
   previousCardId?: string
