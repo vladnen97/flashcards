@@ -22,6 +22,19 @@ const authApi = baseApi.injectEndpoints({
         url: 'v1/auth/logout',
         method: 'POST',
       }),
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          authApi.util.updateQueryData('me', undefined, () => {
+            return null
+          })
+        )
+
+        try {
+          await queryFulfilled
+        } catch {
+          patchResult.undo()
+        }
+      },
       invalidatesTags: ['Me'],
     }),
     signUp: builder.mutation<SignUpResponse, SignUpArgs>({

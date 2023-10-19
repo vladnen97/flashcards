@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
@@ -35,7 +35,7 @@ const columns: Column[] = [
   { key: 'grade', sortable: true, title: 'Grade' },
   { key: 'actions', sortable: false, title: '' },
 ]
-const authorId = 'adc039be-37db-4b2b-9b9f-0ae24920336b'
+const authorId = '8c2d9ee9-368e-40b2-b1ba-99b3ff27ddd8'
 
 export const Cards = () => {
   const searchByQuestion = useAppSelector(state => state.cardsSlice.searchByQuestion)
@@ -56,9 +56,17 @@ export const Cards = () => {
   const setCurrentPage = (value: number) => {
     dispatch(cardsSlice.actions.setCurrentPage(value))
   }
+  const setDeckId = (value: string) => {
+    dispatch(cardsSlice.actions.setDeckId(value))
+  }
 
   const navigate = useNavigate()
   const { id: deckId } = useParams<{ id: string }>()
+
+  useEffect(() => {
+    if (deckId) setDeckId(deckId)
+  }, [deckId])
+
   const sortedString = useMemo(() => {
     if (!orderBy) return null
 

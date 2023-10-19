@@ -11,6 +11,7 @@ import {
   SaveGradeArgs,
   UpdateDeckArgs,
 } from '@/services/decks/deck-types.ts'
+import { RootState } from '@/services/store.ts'
 
 const decksApi = baseApi.injectEndpoints({
   endpoints: builder => ({
@@ -35,6 +36,34 @@ const decksApi = baseApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
+      async onQueryStarted(_, { dispatch, getState, queryFulfilled }) {
+        const state = getState() as RootState
+        const { orderBy, cardsCount, currentPage, itemsPerPage, authorId, searchByName } =
+          state.deckSlice
+
+        try {
+          const res = await queryFulfilled
+
+          dispatch(
+            decksApi.util.updateQueryData(
+              'getDecks',
+              {
+                name: searchByName,
+                itemsPerPage,
+                currentPage,
+                authorId,
+                maxCardsCount: cardsCount[1],
+                minCardsCount: cardsCount[0],
+                orderBy: !orderBy ? null : `${orderBy?.key}-${orderBy?.direction}`,
+              },
+              draft => {
+                draft.items.pop()
+                draft.items.unshift(res.data)
+              }
+            )
+          )
+        } catch {}
+      },
       invalidatesTags: ['Decks'],
     }),
     deleteDeck: builder.mutation<Deck, string>({
@@ -42,6 +71,35 @@ const decksApi = baseApi.injectEndpoints({
         url: `v1/decks/${id}`,
         method: 'DELETE',
       }),
+      async onQueryStarted(id, { dispatch, getState, queryFulfilled }) {
+        const state = getState() as RootState
+        const { orderBy, cardsCount, currentPage, itemsPerPage, authorId, searchByName } =
+          state.deckSlice
+
+        const patchResult = dispatch(
+          decksApi.util.updateQueryData(
+            'getDecks',
+            {
+              name: searchByName,
+              itemsPerPage,
+              currentPage,
+              authorId,
+              maxCardsCount: cardsCount[1],
+              minCardsCount: cardsCount[0],
+              orderBy: !orderBy ? null : `${orderBy?.key}-${orderBy?.direction}`,
+            },
+            draft => {
+              draft.items = draft.items.filter(deck => deck.id !== id)
+            }
+          )
+        )
+
+        try {
+          await queryFulfilled
+        } catch {
+          patchResult.undo()
+        }
+      },
       invalidatesTags: ['Decks'],
     }),
     updateDeck: builder.mutation<DeckWithAuthor, UpdateDeckArgs>({
@@ -50,6 +108,44 @@ const decksApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body,
       }),
+      async onQueryStarted({ id, ...patch }, { dispatch, getState, queryFulfilled }) {
+        const state = getState() as RootState
+        const { orderBy, cardsCount, currentPage, itemsPerPage, authorId, searchByName } =
+          state.deckSlice
+
+        const patchResult = dispatch(
+          decksApi.util.updateQueryData(
+            'getDecks',
+            {
+              name: searchByName,
+              itemsPerPage,
+              currentPage,
+              authorId,
+              maxCardsCount: cardsCount[1],
+              minCardsCount: cardsCount[0],
+              orderBy: !orderBy ? null : `${orderBy?.key}-${orderBy?.direction}`,
+            },
+            draft => {
+              const deckId = draft.items.findIndex(deck => deck.id === id)
+
+              draft.items[deckId].name = patch.name
+            }
+          )
+        )
+
+        const patchResult2 = dispatch(
+          decksApi.util.updateQueryData('getDeckById', id, draft => {
+            draft.name = patch.name
+          })
+        )
+
+        try {
+          await queryFulfilled
+        } catch {
+          patchResult.undo()
+          patchResult2.undo()
+        }
+      },
       invalidatesTags: ['Decks'],
     }),
     getLearn: builder.query<Card, GetLearnArgs>({

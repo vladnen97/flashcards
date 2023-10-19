@@ -47,7 +47,7 @@ const columns: Column[] = [
     title: '',
   },
 ]
-const authorIdConst = 'adc039be-37db-4b2b-9b9f-0ae24920336b'
+const authorIdConst = '8c2d9ee9-368e-40b2-b1ba-99b3ff27ddd8'
 
 export const Decks = () => {
   const dispatch = useAppDispatch()
@@ -86,7 +86,7 @@ export const Decks = () => {
     return `${orderBy.key}-${orderBy.direction}`
   }, [orderBy])
 
-  const { data } = useGetDecksQuery({
+  const { currentData: data } = useGetDecksQuery({
     name: debouncedSearchValue,
     minCardsCount: debouncedCardsRange[0],
     maxCardsCount: debouncedCardsRange[1],

@@ -22,7 +22,6 @@ type ProfileProps = {
 export const Profile: FC<ProfileProps> = ({
   name,
   email,
-  src,
   isEdit,
   setIsEdit,
   onSignOut,

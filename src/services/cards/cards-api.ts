@@ -1,5 +1,6 @@
 import { baseApi } from '@/services/base-api.ts'
 import { Card, CardRequestArgs, CardsResponse, GetCardsArgs } from '@/services/cards/card-types.ts'
+import { RootState } from '@/services/store.ts'
 
 const cardsApi = baseApi.injectEndpoints({
   endpoints: builder => ({
@@ -16,6 +17,34 @@ const cardsApi = baseApi.injectEndpoints({
         url: `v1/cards/${id}`,
         method: 'DELETE',
       }),
+      async onQueryStarted(id, { dispatch, getState, queryFulfilled }) {
+        const state = getState() as RootState
+        const { orderBy, currentPage, itemsPerPage, searchByQuestion, deckId } = state.cardsSlice
+
+        const patchResult = dispatch(
+          cardsApi.util.updateQueryData(
+            'getCards',
+            {
+              id: deckId,
+              question: searchByQuestion,
+              currentPage,
+              itemsPerPage,
+              orderBy: !orderBy ? null : `${orderBy?.key}-${orderBy?.direction}`,
+            },
+            draft => {
+              const cardId = draft.items.findIndex(card => card.id === id)
+
+              draft.items.splice(cardId, 1)
+            }
+          )
+        )
+
+        try {
+          await queryFulfilled
+        } catch {
+          patchResult.undo()
+        }
+      },
       invalidatesTags: ['Cards'],
     }),
     createCard: builder.mutation<Card, CardRequestArgs>({
@@ -32,6 +61,35 @@ const cardsApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body,
       }),
+      async onQueryStarted({ id, ...patch }, { dispatch, getState, queryFulfilled }) {
+        const state = getState() as RootState
+        const { orderBy, currentPage, itemsPerPage, searchByQuestion, deckId } = state.cardsSlice
+
+        const patchResult = dispatch(
+          cardsApi.util.updateQueryData(
+            'getCards',
+            {
+              id: deckId,
+              question: searchByQuestion,
+              currentPage,
+              itemsPerPage,
+              orderBy: !orderBy ? null : `${orderBy?.key}-${orderBy?.direction}`,
+            },
+            draft => {
+              const cardId = draft.items.findIndex(card => card.id === id)
+
+              draft.items[cardId].question = patch.question
+              draft.items[cardId].answer = patch.answer
+            }
+          )
+        )
+
+        try {
+          await queryFulfilled
+        } catch {
+          patchResult.undo()
+        }
+      },
       invalidatesTags: ['Cards'],
     }),
   }),
