@@ -36,18 +36,12 @@ export const Header: FC<HeaderProps> = ({ userData, onSignOut }) => {
               <Typography as={'div'} variant={'subtitle1'} className={s.userName}>
                 {userData.name}
               </Typography>
-              <Avatar
-                src={userData.avatar || 'https://placehold.jp/200x200.png'}
-                name={userData.name}
-              />
+              <Avatar src={userData.avatar} name={userData.name} />
             </button>
           }
         >
           <DropdownItem disabled>
-            <Avatar
-              src={userData.avatar || 'https://placehold.jp/200x200.png'}
-              name={userData.name}
-            />
+            <Avatar src={userData.avatar} name={userData.name} />
             <div>
               <Typography as={'div'} variant={'subtitle2'}>
                 {userData.name}
