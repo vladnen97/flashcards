@@ -3,7 +3,6 @@ import { PaginatedEntity, Pagination } from '@/services/types.ts'
 export type GetCardsArgs = {
   id: string
   question?: string
-  answer?: string
   orderBy?: string | null
   currentPage?: Pagination['currentPage']
   itemsPerPage?: Pagination['itemsPerPage']
