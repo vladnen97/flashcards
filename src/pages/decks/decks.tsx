@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import { Link } from 'react-router-dom'
 
@@ -95,6 +95,12 @@ export const Decks = () => {
     authorId,
     currentPage,
   })
+
+  useEffect(() => {
+    if (cardsCount[1] !== data?.maxCardsCount) {
+      setCardsCount([cardsCount[0], data?.maxCardsCount || 100])
+    }
+  }, [data?.maxCardsCount])
 
   return (
     <>
