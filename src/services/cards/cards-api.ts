@@ -53,6 +53,35 @@ const cardsApi = baseApi.injectEndpoints({
         method: 'POST',
         body,
       }),
+      async onQueryStarted(_, { dispatch, getState, queryFulfilled }) {
+        const state = getState() as RootState
+        const { orderBy, currentPage, itemsPerPage, searchByQuestion, deckId } = state.cardsSlice
+
+        try {
+          const res = await queryFulfilled
+
+          dispatch(
+            cardsApi.util.updateQueryData(
+              'getCards',
+              {
+                id: deckId,
+                question: searchByQuestion,
+                currentPage,
+                itemsPerPage,
+                orderBy: !orderBy ? null : `${orderBy?.key}-${orderBy?.direction}`,
+              },
+              draft => {
+                if (draft.items.length < itemsPerPage) {
+                  draft.items.unshift(res.data)
+                } else {
+                  draft.items.pop()
+                  draft.items.unshift(res.data)
+                }
+              }
+            )
+          )
+        } catch {}
+      },
       invalidatesTags: ['Cards'],
     }),
     updateCard: builder.mutation<Card, CardRequestArgs>({

@@ -51,13 +51,11 @@ export const useCreateUpdateCard = ({
   const handleCardSubmit = (data: CreateCardFormValues) => {
     if (isUpdate) {
       updateCard({ id: cardId || '', ...data })
-        .unwrap()
-        .then(() => setOpen(false))
     } else {
       createCard({ id: deckId, ...data })
-        .unwrap()
-        .then(() => setOpen(false))
     }
+
+    setOpen(false)
   }
 
   return { open, setOpen, handleSubmit, control, handleCardSubmit }

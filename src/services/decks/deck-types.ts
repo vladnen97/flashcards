@@ -1,9 +1,9 @@
-import { PaginatedEntity, Pagination } from '@/services/types.ts'
+import { PaginatedEntity, Pagination, User } from '@/services/types.ts'
 
 export type GetDecksArgs = {
   minCardsCount?: number
   maxCardsCount?: number
-  name?: string
+  name?: Deck['name']
   authorId?: DeckAuthor['id']
   orderBy?: string | null
   currentPage?: Pagination['currentPage']
@@ -11,7 +11,7 @@ export type GetDecksArgs = {
 }
 export type CreateDeckArgs = {
   cover?: string
-  name: string
+  name: Deck['name']
   isPrivate?: boolean
 }
 export type UpdateDeckArgs = CreateDeckArgs & { id: string }
@@ -20,7 +20,7 @@ export type GetLearnArgs = {
   previousCardId?: string
 }
 export type SaveGradeArgs = {
-  deckId: string
+  deckId: Deck['id']
   cardId: string
   grade: 0 | 1 | 2 | 3 | 4 | 5
 }
@@ -29,8 +29,8 @@ export type DecksResponse = PaginatedEntity<DeckWithAuthor> & {
   maxCardsCount: number
 }
 export type DeckAuthor = {
-  id: string
-  name: string
+  id: User['id']
+  name: User['name']
 }
 export type DeckWithAuthor = Deck & {
   author: DeckAuthor

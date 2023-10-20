@@ -37,14 +37,14 @@ export const decksSlice = createSlice({
     setItemsPerPage: (state, action: PayloadAction<number>) => {
       state.itemsPerPage = action.payload
     },
-    setClearFilters: () => {
+    setClearFilters: state => {
       return {
         searchByName: '',
         orderBy: null,
         authorId: '',
         itemsPerPage: 13,
         currentPage: 1,
-        cardsCount: [0, 100],
+        cardsCount: [0, state.cardsCount[1]],
       }
     },
   },

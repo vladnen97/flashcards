@@ -1,5 +1,17 @@
 import { baseApi } from '../base-api.ts'
 
+import {
+  LoginArgs,
+  LoginResponse,
+  MeResponse,
+  RecoverPasswordArgs,
+  ResetPasswordArgs,
+  SignUpArgs,
+  SignUpResponse,
+  UpdateProfileArgs,
+} from '@/services/auth/auth-types.ts'
+import { User } from '@/services/types.ts'
+
 const authApi = baseApi.injectEndpoints({
   endpoints: builder => ({
     me: builder.query<MeResponse, void>({
@@ -78,42 +90,3 @@ export const {
   useResetPasswordMutation,
   useUpdateProfileMutation,
 } = authApi
-
-type LoginArgs = {
-  email: string
-  password: string
-  rememberMe?: boolean
-}
-type SignUpArgs = {
-  name: string
-  email: string
-  password: string
-}
-type RecoverPasswordArgs = {
-  html: string
-  email: string
-}
-type ResetPasswordArgs = {
-  token: string
-  password: string
-}
-type UpdateProfileArgs = {
-  avatar?: string
-  name: string
-}
-
-type LoginResponse = {
-  accessToken: string
-}
-type MeResponse = User | null
-type SignUpResponse = Pick<User, 'id' | 'email' | 'name'>
-
-type User = {
-  avatar: string | null
-  id: string
-  email: string
-  isEmailVerified: boolean
-  name: string
-  created: string
-  updated: string
-}
