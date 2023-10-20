@@ -9,3 +9,13 @@ export type Pagination = {
   itemsPerPage: number
   totalItems: number
 }
+
+export type User = {
+  avatar: string | null
+  id: string
+  email: string
+  isEmailVerified: boolean
+  name: string
+  created: string
+  updated: string
+}
