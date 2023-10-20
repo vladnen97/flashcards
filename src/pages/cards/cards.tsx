@@ -74,7 +74,7 @@ export const Cards = () => {
   }, [orderBy])
 
   const { data: deckData, isLoading } = useGetDeckByIdQuery(deckId || '')
-  const { data: cardsData } = useGetCardsQuery({
+  const { currentData: cardsData } = useGetCardsQuery({
     id: deckId || '',
     itemsPerPage,
     question: debouncedSearchByQuestion,
@@ -170,7 +170,7 @@ export const Cards = () => {
                   <TableCell>{card.question}</TableCell>
                   <TableCell>{card.answer}</TableCell>
                   <TableCell>{new Date(card.updated).toLocaleDateString('ru-RU')}</TableCell>
-                  <TableCell>{card.grade}</TableCell>
+                  <TableCell>{card.grade || 0}</TableCell>
                   <TableCell>
                     {isDeckOwner && (
                       <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
