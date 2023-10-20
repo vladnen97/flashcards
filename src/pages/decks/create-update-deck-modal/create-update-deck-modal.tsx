@@ -34,24 +34,14 @@ export const CreateUpdateDeckModal = ({
   const handleDeckSubmit = (data: FormValues) => {
     if (isUpdate) {
       updateDeck({ ...data, id: deckId || '' })
-        .unwrap()
-        .then(() => {
-          if (setOpenModal) {
-            setOpenModal(false)
-          } else {
-            setOpen(false)
-          }
-        })
     } else {
       createDeck(data)
-        .unwrap()
-        .then(() => {
-          if (setOpenModal) {
-            setOpenModal(false)
-          } else {
-            setOpen(false)
-          }
-        })
+    }
+
+    if (setOpenModal) {
+      setOpenModal(false)
+    } else {
+      setOpen(false)
     }
   }
 
