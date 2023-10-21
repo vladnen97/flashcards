@@ -2,14 +2,12 @@ import { baseApi } from '../base-api.ts'
 
 import { Card } from '@/services/cards/card-types.ts'
 import {
-  CreateDeckArgs,
   Deck,
   DecksResponse,
   DeckWithAuthor,
   GetDecksArgs,
   GetLearnArgs,
   SaveGradeArgs,
-  UpdateDeckArgs,
 } from '@/services/decks/deck-types.ts'
 import { RootState } from '@/services/store.ts'
 
@@ -30,11 +28,11 @@ const decksApi = baseApi.injectEndpoints({
       }),
       providesTags: ['Decks'],
     }),
-    createDeck: builder.mutation<DeckWithAuthor, CreateDeckArgs>({
-      query: data => ({
+    createDeck: builder.mutation<DeckWithAuthor, FormData>({
+      query: body => ({
         url: 'v1/decks',
         method: 'POST',
-        body: data,
+        body,
       }),
       async onQueryStarted(_, { dispatch, getState, queryFulfilled }) {
         const state = getState() as RootState
@@ -102,16 +100,27 @@ const decksApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ['Decks'],
     }),
-    updateDeck: builder.mutation<DeckWithAuthor, UpdateDeckArgs>({
-      query: ({ id, ...body }) => ({
-        url: `v1/decks/${id}`,
-        method: 'PATCH',
-        body,
-      }),
-      async onQueryStarted({ id, ...patch }, { dispatch, getState, queryFulfilled }) {
+    updateDeck: builder.mutation<DeckWithAuthor, FormData>({
+      query: formData => {
+        const id = formData.get('deckId')
+
+        formData.delete('deckId')
+
+        return {
+          url: `v1/decks/${id}`,
+          method: 'PATCH',
+          body: formData,
+        }
+      },
+      async onQueryStarted(formData, { dispatch, getState, queryFulfilled }) {
         const state = getState() as RootState
         const { orderBy, cardsCount, currentPage, itemsPerPage, authorId, searchByName } =
           state.deckSlice
+
+        const id = formData.get('deckId') as string
+        const isPrivate = formData.get('isPrivate') as string
+        const cover = formData.get('cover') as File | null
+        const name = formData.get('name') as string
 
         const patchResult = dispatch(
           decksApi.util.updateQueryData(
@@ -128,14 +137,21 @@ const decksApi = baseApi.injectEndpoints({
             draft => {
               const deckId = draft.items.findIndex(deck => deck.id === id)
 
-              draft.items[deckId].name = patch.name
+              draft.items[deckId].name = name
+              if (cover) {
+                draft.items[deckId].cover = URL.createObjectURL(cover)
+              }
+              draft.items[deckId].isPrivate = Boolean(isPrivate === 'true')
             }
           )
         )
 
         const patchResult2 = dispatch(
           decksApi.util.updateQueryData('getDeckById', id, draft => {
-            draft.name = patch.name
+            draft.name = name
+            if (cover) {
+              draft.cover = URL.createObjectURL(cover)
+            }
           })
         )
 
