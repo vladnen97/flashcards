@@ -8,7 +8,6 @@ import {
   ResetPasswordArgs,
   SignUpArgs,
   SignUpResponse,
-  UpdateProfileArgs,
 } from '@/services/auth/auth-types.ts'
 import { User } from '@/services/types.ts'
 
@@ -70,7 +69,7 @@ const authApi = baseApi.injectEndpoints({
         body,
       }),
     }),
-    updateProfile: builder.mutation<User, UpdateProfileArgs>({
+    updateProfile: builder.mutation<User, FormData>({
       query: body => ({
         url: 'v1/auth/me',
         method: 'PATCH',
