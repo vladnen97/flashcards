@@ -86,7 +86,7 @@ export const Decks = () => {
     return `${orderBy.key}-${orderBy.direction}`
   }, [orderBy])
 
-  const { currentData: data } = useGetDecksQuery({
+  let { currentData, data } = useGetDecksQuery({
     name: debouncedSearchValue,
     minCardsCount: debouncedCardsRange[0],
     maxCardsCount: debouncedCardsRange[1],
@@ -96,11 +96,15 @@ export const Decks = () => {
     currentPage,
   })
 
+  if (!currentData && data) {
+    currentData = { ...data }
+  }
+
   useEffect(() => {
-    if (cardsCount[1] !== data?.maxCardsCount) {
-      setCardsCount([cardsCount[0], data?.maxCardsCount || 100])
+    if (cardsCount[1] !== currentData?.maxCardsCount) {
+      setCardsCount([cardsCount[0], currentData?.maxCardsCount || 100])
     }
-  }, [data?.maxCardsCount])
+  }, [currentData?.maxCardsCount])
 
   return (
     <>
@@ -135,21 +139,24 @@ export const Decks = () => {
           onValueChange={setCardsCount}
           multiple
           label={'Number of cards'}
-          max={data?.maxCardsCount}
+          max={currentData?.maxCardsCount}
         />
         <Button variant={'secondary'} onClick={setClearFilters}>
           Clear Filter
         </Button>
       </div>
-      {!!data?.items.length && (
+      {!!currentData?.items.length && (
         <Table>
           <Head columns={columns} sort={orderBy} onSort={setOrderBy} />
           <TableBody>
-            {data?.items.map(deck => {
+            {currentData?.items.map(deck => {
               return (
                 <TableRow key={deck.id}>
                   <TableCell>
                     <Typography as={Link} to={`/cards/${deck.id}`} className={s.deckLink}>
+                      {deck.cover && (
+                        <img src={deck.cover} alt={`${deck.name}-cover`} className={s.coverImage} />
+                      )}
                       {deck.name}
                     </Typography>
                   </TableCell>
@@ -165,6 +172,7 @@ export const Decks = () => {
                         <>
                           <CreateUpdateDeckModal
                             isUpdate
+                            cover={deck.cover}
                             deckId={deck.id}
                             deckName={deck.name}
                             isPrivateDeck={deck.isPrivate}
@@ -187,7 +195,7 @@ export const Decks = () => {
       )}
       <div className={s.pagination}>
         <Pagination
-          count={data?.pagination.totalPages || 1}
+          count={currentData?.pagination.totalPages || 1}
           page={currentPage}
           onChange={setCurrentPage}
         />
