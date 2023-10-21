@@ -21,6 +21,8 @@ const createCardSchema = z.object({
 
 type CreateCardFormValues = z.infer<typeof createCardSchema>
 type UseCreateUpdateCardProps = {
+  answerCover?: File | null
+  questionCover?: File | null
   deckId: string
   cardId?: string
   cardQuestion?: string
@@ -29,6 +31,8 @@ type UseCreateUpdateCardProps = {
 }
 
 export const useCreateUpdateCard = ({
+  answerCover,
+  questionCover,
   cardId,
   cardQuestion,
   cardAnswer,
@@ -49,10 +53,19 @@ export const useCreateUpdateCard = ({
   const [updateCard] = useUpdateCardMutation()
 
   const handleCardSubmit = (data: CreateCardFormValues) => {
+    const formData = new FormData()
+
+    questionCover && formData.append('questionImg', questionCover)
+    answerCover && formData.append('answerImg', answerCover)
+    formData.append('answer', data.answer)
+    formData.append('question', data.question)
+    isUpdate && formData.append('cardId', cardId || '')
+    formData.append('deckId', deckId)
+
     if (isUpdate) {
-      updateCard({ id: cardId || '', ...data })
+      updateCard(formData)
     } else {
-      createCard({ id: deckId, ...data })
+      createCard(formData)
     }
 
     setOpen(false)

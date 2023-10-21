@@ -1,13 +1,15 @@
-import { ReactNode } from 'react'
+import { ChangeEvent, ReactNode, useState } from 'react'
 
 import s from './create-update-deck.module.scss'
 import { FormValues, useCreateUpdateDeck } from './use-create-update-deck.ts'
 
+import { BlankCover, ImageOutline } from 'assets/icons'
 import Button from 'components/ui/button/button.tsx'
 import { ControlledCheckbox, ControlledTextField } from 'components/ui/controlled'
 import { Modal } from 'components/ui/modal'
 
 type Props = {
+  cover?: string | null
   openModal?: boolean
   setOpenModal?: (value: boolean) => void
   deckId?: string
@@ -18,6 +20,7 @@ type Props = {
 }
 
 export const CreateUpdateDeckModal = ({
+  cover,
   openModal,
   setOpenModal,
   isUpdate = false,
@@ -31,11 +34,27 @@ export const CreateUpdateDeckModal = ({
     isPrivateDeck,
   })
 
+  const [file, setFile] = useState<File | null>(null)
+
+  // eslint-disable-next-line no-nested-ternary
+  const whatToShow = file ? URL.createObjectURL(file) : cover ? cover : undefined
+
+  const handleSetFile = (e: ChangeEvent<HTMLInputElement>) => {
+    setFile(e.target.files![0])
+  }
+
   const handleDeckSubmit = (data: FormValues) => {
+    const formData = new FormData()
+
+    file && formData.append('cover', file)
+    isUpdate && formData.append('deckId', deckId || '')
+    formData.append('name', data.name)
+    formData.append('isPrivate', JSON.stringify(data.isPrivate))
+
     if (isUpdate) {
-      updateDeck({ ...data, id: deckId || '' })
+      updateDeck(formData)
     } else {
-      createDeck(data)
+      createDeck(formData)
     }
 
     if (setOpenModal) {
@@ -52,6 +71,22 @@ export const CreateUpdateDeckModal = ({
       open={openModal ? openModal : open}
       onClose={setOpenModal ? setOpenModal : setOpen}
     >
+      <div className={s.coverModal}>
+        {cover || file ? <img src={whatToShow} alt="cover" className={s.img} /> : <BlankCover />}
+      </div>
+
+      <label htmlFor={'cover'}>
+        <input
+          type="file"
+          accept={'image/*'}
+          onChange={handleSetFile}
+          id={'cover'}
+          style={{ display: 'none' }}
+        />
+        <Button variant="secondary" as={'span'} fullWidth className={s.filePicker}>
+          <ImageOutline /> Change Cover
+        </Button>
+      </label>
       <form onSubmit={handleSubmit(handleDeckSubmit)} className={s.content}>
         <ControlledTextField name={'name'} control={control} label={'Name Deck'} />
         <ControlledCheckbox name={'isPrivate'} control={control} label={'Private deck'} />
