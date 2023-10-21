@@ -142,6 +142,11 @@ export const Cards = () => {
           <Button onClick={() => navigate(`/learn/${deckId}`)}>Learn to Deck</Button>
         )}
       </div>
+      <div className={s.imgBlock}>
+        {deckData?.cover && (
+          <img src={deckData?.cover} alt={`${deckData?.name}-cover`} className={s.coverImage} />
+        )}
+      </div>
       <div className={s.input}>
         <TextField
           value={searchByQuestion}
@@ -167,8 +172,30 @@ export const Cards = () => {
             {cardsData?.items.map(card => {
               return (
                 <TableRow key={card.id}>
-                  <TableCell>{card.question}</TableCell>
-                  <TableCell>{card.answer}</TableCell>
+                  <TableCell>
+                    <div className={s.tableCellWithCover}>
+                      {card.questionImg && (
+                        <img
+                          src={card.questionImg}
+                          alt={`${card.question}-cover`}
+                          className={s.coverImageTable}
+                        />
+                      )}
+                      {card.question}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className={s.tableCellWithCover}>
+                      {card.answerImg && (
+                        <img
+                          src={card.answerImg}
+                          alt={`${card.answer}-cover`}
+                          className={s.coverImageTable}
+                        />
+                      )}
+                      {card.answer}
+                    </div>
+                  </TableCell>
                   <TableCell>{new Date(card.updated).toLocaleDateString('ru-RU')}</TableCell>
                   <TableCell>{card.grade || 0}</TableCell>
                   <TableCell>
@@ -176,6 +203,8 @@ export const Cards = () => {
                       <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
                         <CreateUpdateCardModal
                           isUpdate
+                          answerCover={card.answerImg}
+                          questionCover={card.questionImg}
                           deckId={card.deckId}
                           cardId={card.id}
                           cardQuestion={card.question}
