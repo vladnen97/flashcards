@@ -7,14 +7,19 @@ export type GetCardsArgs = {
   currentPage?: Pagination['currentPage']
   itemsPerPage?: Pagination['itemsPerPage']
 }
-export type CardRequestArgs = {
+export type CreateCardArgs = {
   id: string
   question: string
   answer: string
-  questionImg?: string
-  answerImg?: string
-  questionVideo?: string
-  answerVideo?: string
+  questionImg?: File | null
+  answerImg?: File | null
+}
+export type DeleteCardArgs = {
+  id: string
+  deckId: string
+}
+export type UpdateCardArgs = CreateCardArgs & {
+  deckId: string
 }
 
 export type CardsResponse = PaginatedEntity<Card>
