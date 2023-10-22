@@ -42,14 +42,12 @@ type SaveGradeFormValues = {
 
 export const Learn = () => {
   const { id: deckId } = useParams<{ id: string }>()
-  const [previousCardId, setPreviousCardId] = useState<string | undefined>()
   const [showAnswer, setShowAnswer] = useState<boolean>(false)
   const { data: deck } = useGetDeckByIdQuery(deckId || '')
-  const { data: card } = useGetLearnQuery({
+  let { data: card } = useGetLearnQuery({
     id: deckId || '',
-    previousCardId,
   })
-  const [saveGrade] = useSaveGradeMutation()
+  const [saveGrade, { isLoading }] = useSaveGradeMutation()
 
   const { handleSubmit, control } = useForm<SaveGradeFormValues>({
     mode: 'onSubmit',
@@ -62,10 +60,11 @@ export const Learn = () => {
     saveGrade({ deckId: deck?.id || '', cardId: card?.id || '', ...data })
       .unwrap()
       .then(() => {
-        setPreviousCardId(card?.id)
         setShowAnswer(false)
       })
   }
+
+  if (isLoading) return <div style={{ width: '100px', margin: '0 auto' }}>Loading...</div>
 
   return (
     <div>
@@ -94,6 +93,9 @@ export const Learn = () => {
             <Typography variant={'subtitle2'} as={'span'} className={s.shots}>
               {card?.shots}
             </Typography>
+            <div className={s.imgCard}>
+              {card?.questionImg && <img src={card?.questionImg} alt="cover" className={s.img} />}
+            </div>
           </div>
         </div>
         {showAnswer ? (
@@ -106,6 +108,9 @@ export const Learn = () => {
                 <Typography variant={'body1'} as={'span'}>
                   {card?.answer}
                 </Typography>
+                <div className={s.imgCard}>
+                  {card?.answerImg && <img src={card?.answerImg} alt="cover" className={s.img} />}
+                </div>
               </div>
             </div>
             <form onSubmit={handleSubmit(handleSaveGrade)}>

@@ -6,6 +6,7 @@ import { CreateUpdateDeckModal } from './create-update-deck-modal'
 import { DeleteDeckModal } from './delete-deck-modal'
 
 import { useDebounce } from '@/common/hooks/useDebounce.ts'
+import { useMeQuery } from '@/services/auth'
 import { useGetDecksQuery } from '@/services/decks'
 import { decksSlice } from '@/services/decks/decks-slice.ts'
 import { useAppDispatch, useAppSelector } from '@/services/store.ts'
@@ -47,16 +48,20 @@ const columns: Column[] = [
     title: '',
   },
 ]
-const authorIdConst = '8c2d9ee9-368e-40b2-b1ba-99b3ff27ddd8'
 
 export const Decks = () => {
+  const { data: meData } = useMeQuery()
   const dispatch = useAppDispatch()
+
   const searchByName = useAppSelector(state => state.deckSlice.searchByName)
   const authorId = useAppSelector(state => state.deckSlice.authorId)
   const cardsCount = useAppSelector(state => state.deckSlice.cardsCount)
   const orderBy = useAppSelector(state => state.deckSlice.orderBy)
   const currentPage = useAppSelector(state => state.deckSlice.currentPage)
   const itemsPerPage = useAppSelector(state => state.deckSlice.itemsPerPage)
+
+  const debouncedSearchValue = useDebounce(searchByName, 800)
+  const debouncedCardsRange = useDebounce(cardsCount, 800)
 
   const setSearchByName = (value: string) => {
     dispatch(decksSlice.actions.setSearchByName(value))
@@ -76,9 +81,6 @@ export const Decks = () => {
   const setClearFilters = () => {
     dispatch(decksSlice.actions.setClearFilters())
   }
-
-  const debouncedSearchValue = useDebounce(searchByName, 800)
-  const debouncedCardsRange = useDebounce(cardsCount, 800)
 
   const sortedString = useMemo(() => {
     if (!orderBy) return null
@@ -123,7 +125,7 @@ export const Decks = () => {
           onChange={e => setSearchByName(e.target.value)}
         />
         <TabSwitcher label={'Show packs cards'} value={authorId} onValueChange={setAuthorId}>
-          <TabSwitcherItem value={authorIdConst}>
+          <TabSwitcherItem value={meData?.id || ''}>
             <Typography variant="body1" as={'div'}>
               My Decks
             </Typography>
@@ -168,7 +170,7 @@ export const Decks = () => {
                       <Typography as={Link} to={`/learn/${deck.id}`}>
                         <PlayCircleOutline />
                       </Typography>
-                      {authorIdConst === deck.author.id && (
+                      {meData?.id === deck.author.id && (
                         <>
                           <CreateUpdateDeckModal
                             isUpdate

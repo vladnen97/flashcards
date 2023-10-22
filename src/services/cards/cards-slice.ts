@@ -3,7 +3,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Sort } from 'components/ui/table'
 
 const initialState = {
-  deckId: '',
   searchByQuestion: '',
   orderBy: null as Sort,
   currentPage: 1,
@@ -27,9 +26,6 @@ export const cardsSlice = createSlice({
     },
     setItemsPerPage: (state, action: PayloadAction<number>) => {
       state.itemsPerPage = action.payload
-    },
-    setDeckId: (state, action: PayloadAction<string>) => {
-      state.deckId = action.payload
     },
   },
 })

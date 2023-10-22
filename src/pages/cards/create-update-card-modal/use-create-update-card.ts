@@ -63,9 +63,9 @@ export const useCreateUpdateCard = ({
     formData.append('deckId', deckId)
 
     if (isUpdate) {
-      updateCard(formData)
+      updateCard({ ...data, deckId, id: cardId || '' })
     } else {
-      createCard(formData)
+      createCard({ ...data, id: deckId, questionImg: questionCover, answerImg: answerCover })
     }
 
     setOpen(false)

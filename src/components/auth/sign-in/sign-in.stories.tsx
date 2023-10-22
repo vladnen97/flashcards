@@ -21,6 +21,7 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
+    isSubmitting: false,
     onSubmit: (data: FormValues) => console.log(data),
   },
 }

@@ -1,5 +1,12 @@
 import { baseApi } from '@/services/base-api.ts'
-import { Card, CardsResponse, GetCardsArgs } from '@/services/cards/card-types.ts'
+import {
+  Card,
+  CardsResponse,
+  CreateCardArgs,
+  DeleteCardArgs,
+  GetCardsArgs,
+  UpdateCardArgs,
+} from '@/services/cards/card-types.ts'
 import { RootState } from '@/services/store.ts'
 
 const cardsApi = baseApi.injectEndpoints({
@@ -12,14 +19,14 @@ const cardsApi = baseApi.injectEndpoints({
       }),
       providesTags: ['Cards'],
     }),
-    deleteCard: builder.mutation<void, string>({
-      query: id => ({
+    deleteCard: builder.mutation<void, DeleteCardArgs>({
+      query: ({ id }) => ({
         url: `v1/cards/${id}`,
         method: 'DELETE',
       }),
-      async onQueryStarted(id, { dispatch, getState, queryFulfilled }) {
+      async onQueryStarted({ id, deckId }, { dispatch, getState, queryFulfilled }) {
         const state = getState() as RootState
-        const { orderBy, currentPage, itemsPerPage, searchByQuestion, deckId } = state.cardsSlice
+        const { orderBy, currentPage, itemsPerPage, searchByQuestion } = state.cardsSlice
 
         const patchResult = dispatch(
           cardsApi.util.updateQueryData(
@@ -47,11 +54,14 @@ const cardsApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ['Cards'],
     }),
-    createCard: builder.mutation<Card, FormData>({
-      query: formData => {
-        const id = formData.get('deckId') as string
+    createCard: builder.mutation<Card, CreateCardArgs>({
+      query: ({ id, ...data }) => {
+        const formData = new FormData()
 
-        formData.delete('deckId')
+        formData.append('answer', data.answer)
+        formData.append('question', data.question)
+        data.questionImg && formData.append('questionImg', data.questionImg)
+        data.answerImg && formData.append('answerImg', data.answerImg)
 
         return {
           url: `v1/decks/${id}/cards`,
@@ -59,9 +69,9 @@ const cardsApi = baseApi.injectEndpoints({
           body: formData,
         }
       },
-      async onQueryStarted(_, { dispatch, getState, queryFulfilled }) {
+      async onQueryStarted({ id }, { dispatch, getState, queryFulfilled }) {
         const state = getState() as RootState
-        const { orderBy, currentPage, itemsPerPage, searchByQuestion, deckId } = state.cardsSlice
+        const { orderBy, currentPage, itemsPerPage, searchByQuestion } = state.cardsSlice
 
         try {
           const res = await queryFulfilled
@@ -70,7 +80,7 @@ const cardsApi = baseApi.injectEndpoints({
             cardsApi.util.updateQueryData(
               'getCards',
               {
-                id: deckId,
+                id,
                 question: searchByQuestion,
                 currentPage,
                 itemsPerPage,
@@ -90,12 +100,14 @@ const cardsApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ['Cards'],
     }),
-    updateCard: builder.mutation<Card, FormData>({
-      query: formData => {
-        const id = formData.get('cardId') as string
+    updateCard: builder.mutation<Card, UpdateCardArgs>({
+      query: ({ id, deckId, ...data }) => {
+        const formData = new FormData()
 
-        formData.delete('cardId')
-        formData.delete('deckId')
+        formData.append('answer', data.answer)
+        formData.append('question', data.question)
+        data.questionImg && formData.append('questionImg', data.questionImg)
+        data.answerImg && formData.append('answerImg', data.answerImg)
 
         return {
           url: `v1/cards/${id}`,
@@ -103,9 +115,9 @@ const cardsApi = baseApi.injectEndpoints({
           body: formData,
         }
       },
-      async onQueryStarted(formData, { dispatch, getState, queryFulfilled }) {
+      async onQueryStarted({ id, deckId, ...patch }, { dispatch, getState, queryFulfilled }) {
         const state = getState() as RootState
-        const { orderBy, currentPage, itemsPerPage, searchByQuestion, deckId } = state.cardsSlice
+        const { orderBy, currentPage, itemsPerPage, searchByQuestion } = state.cardsSlice
 
         const patchResult = dispatch(
           cardsApi.util.updateQueryData(
@@ -118,22 +130,15 @@ const cardsApi = baseApi.injectEndpoints({
               orderBy: !orderBy ? null : `${orderBy?.key}-${orderBy?.direction}`,
             },
             draft => {
-              const questionImg = formData.get('questionImg') as File | null
-              const answerImg = formData.get('answerImg') as File | null
-
-              const answer = formData.get('answer') as string
-              const question = formData.get('question') as string
-              const id = formData.get('cardId') as string
-
               const cardId = draft.items.findIndex(card => card.id === id)
 
-              draft.items[cardId].question = question
-              draft.items[cardId].answer = answer
-              if (questionImg) {
-                draft.items[cardId].questionImg = URL.createObjectURL(questionImg)
+              draft.items[cardId].question = patch.question
+              draft.items[cardId].answer = patch.answer
+              if (patch.questionImg) {
+                draft.items[cardId].questionImg = URL.createObjectURL(patch.questionImg)
               }
-              if (answerImg) {
-                draft.items[cardId].answerImg = URL.createObjectURL(answerImg)
+              if (patch.answerImg) {
+                draft.items[cardId].answerImg = URL.createObjectURL(patch.answerImg)
               }
             }
           )

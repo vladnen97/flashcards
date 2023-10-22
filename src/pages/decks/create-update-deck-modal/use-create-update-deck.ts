@@ -8,7 +8,7 @@ import { useCreateDeckMutation, useUpdateDeckMutation } from '@/services/decks'
 
 const createDeckSchema = z.object({
   name: z.string().nonempty('Enter deck name').min(3).max(30),
-  isPrivate: z.boolean().optional(),
+  isPrivate: z.boolean(),
 })
 
 export type FormValues = z.infer<typeof createDeckSchema>

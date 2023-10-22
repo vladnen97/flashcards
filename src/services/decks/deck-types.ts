@@ -10,9 +10,9 @@ export type GetDecksArgs = {
   itemsPerPage?: Pagination['itemsPerPage']
 }
 export type CreateDeckArgs = {
-  cover?: string
+  cover: File | null
   name: Deck['name']
-  isPrivate?: boolean
+  isPrivate: boolean
 }
 export type UpdateDeckArgs = CreateDeckArgs & { id: string }
 export type GetLearnArgs = {

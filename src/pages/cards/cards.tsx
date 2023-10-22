@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { Link, useNavigate, useParams } from 'react-router-dom'
 
@@ -7,6 +7,7 @@ import { CreateUpdateCardModal } from '@/pages/cards/create-update-card-modal'
 import { DeleteCard } from '@/pages/cards/delete-card-modal'
 import { CreateUpdateDeckModal } from '@/pages/decks/create-update-deck-modal'
 import { DeleteDeckModal } from '@/pages/decks/delete-deck-modal'
+import { useMeQuery } from '@/services/auth'
 import { useGetCardsQuery } from '@/services/cards'
 import { cardsSlice } from '@/services/cards/cards-slice.ts'
 import { useGetDeckByIdQuery } from '@/services/decks'
@@ -35,7 +36,6 @@ const columns: Column[] = [
   { key: 'grade', sortable: true, title: 'Grade' },
   { key: 'actions', sortable: false, title: '' },
 ]
-const authorId = '8c2d9ee9-368e-40b2-b1ba-99b3ff27ddd8'
 
 export const Cards = () => {
   const searchByQuestion = useAppSelector(state => state.cardsSlice.searchByQuestion)
@@ -44,28 +44,10 @@ export const Cards = () => {
   const currentPage = useAppSelector(state => state.cardsSlice.currentPage)
   const itemsPerPage = useAppSelector(state => state.cardsSlice.itemsPerPage)
   const [open, setOpen] = useState<boolean>(false)
-
-  const dispatch = useAppDispatch()
-
-  const setSearchByQuestion = (value: string) => {
-    dispatch(cardsSlice.actions.setSearchByQuestion(value))
-  }
-  const setOrderBy = (value: Sort) => {
-    dispatch(cardsSlice.actions.setOrderBy(value))
-  }
-  const setCurrentPage = (value: number) => {
-    dispatch(cardsSlice.actions.setCurrentPage(value))
-  }
-  const setDeckId = (value: string) => {
-    dispatch(cardsSlice.actions.setDeckId(value))
-  }
-
   const navigate = useNavigate()
   const { id: deckId } = useParams<{ id: string }>()
-
-  useEffect(() => {
-    if (deckId) setDeckId(deckId)
-  }, [deckId])
+  const dispatch = useAppDispatch()
+  const { data: meData } = useMeQuery()
 
   const sortedString = useMemo(() => {
     if (!orderBy) return null
@@ -82,7 +64,17 @@ export const Cards = () => {
     currentPage,
   })
 
-  const isDeckOwner = deckData?.userId === authorId
+  const setSearchByQuestion = (value: string) => {
+    dispatch(cardsSlice.actions.setSearchByQuestion(value))
+  }
+  const setOrderBy = (value: Sort) => {
+    dispatch(cardsSlice.actions.setOrderBy(value))
+  }
+  const setCurrentPage = (value: number) => {
+    dispatch(cardsSlice.actions.setCurrentPage(value))
+  }
+
+  const isDeckOwner = deckData?.userId === (meData?.id || '')
 
   return isLoading ? (
     <div>Loading...</div>
@@ -212,6 +204,7 @@ export const Cards = () => {
                           trigger={<EditOutline />}
                         />
                         <DeleteCard
+                          deckId={deckId || ''}
                           cardId={card.id}
                           cardName={card.question}
                           trigger={<TrashOutline />}

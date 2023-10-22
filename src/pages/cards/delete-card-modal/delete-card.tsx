@@ -9,6 +9,7 @@ import { Typography } from 'components/ui/typography'
 import s from './delete-card.module.scss'
 
 type Props = {
+  deckId: string
   cardId: string
   cardName: string
   trigger: ReactNode
@@ -18,7 +19,7 @@ export const DeleteCard = (props: Props) => {
   const [deleteCard] = useDeleteCardMutation()
 
   const handleDelete = () => {
-    deleteCard(props.cardId)
+    deleteCard({ id: props.cardId, deckId: props.deckId })
       .unwrap()
       .then(() => setOpen(false))
   }
