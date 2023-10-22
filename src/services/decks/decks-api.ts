@@ -171,12 +171,23 @@ const decksApi = baseApi.injectEndpoints({
         params,
       }),
     }),
-    saveGrade: builder.mutation<void, SaveGradeArgs>({
+    saveGrade: builder.mutation<Card, SaveGradeArgs>({
       query: ({ deckId: id, ...body }) => ({
         url: `v1/decks/${id}/learn`,
         method: 'POST',
         body,
       }),
+      async onQueryStarted({ deckId }, { dispatch, queryFulfilled }) {
+        try {
+          const res = await queryFulfilled
+
+          dispatch(
+            decksApi.util.updateQueryData('getLearn', { id: deckId }, () => {
+              return { ...res.data }
+            })
+          )
+        } catch {}
+      },
       invalidatesTags: ['Cards'],
     }),
   }),
