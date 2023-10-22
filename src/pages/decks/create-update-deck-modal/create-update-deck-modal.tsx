@@ -44,17 +44,10 @@ export const CreateUpdateDeckModal = ({
   }
 
   const handleDeckSubmit = (data: FormValues) => {
-    const formData = new FormData()
-
-    file && formData.append('cover', file)
-    isUpdate && formData.append('deckId', deckId || '')
-    formData.append('name', data.name)
-    formData.append('isPrivate', JSON.stringify(data.isPrivate))
-
     if (isUpdate) {
-      updateDeck(formData)
+      updateDeck({ ...data, cover: file, id: deckId || '' })
     } else {
-      createDeck(formData)
+      createDeck({ ...data, cover: file })
     }
 
     if (setOpenModal) {
