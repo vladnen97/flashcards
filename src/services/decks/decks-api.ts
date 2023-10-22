@@ -2,12 +2,14 @@ import { baseApi } from '../base-api.ts'
 
 import { Card } from '@/services/cards/card-types.ts'
 import {
+  CreateDeckArgs,
   Deck,
   DecksResponse,
   DeckWithAuthor,
   GetDecksArgs,
   GetLearnArgs,
   SaveGradeArgs,
+  UpdateDeckArgs,
 } from '@/services/decks/deck-types.ts'
 import { RootState } from '@/services/store.ts'
 
@@ -28,12 +30,20 @@ const decksApi = baseApi.injectEndpoints({
       }),
       providesTags: ['Decks'],
     }),
-    createDeck: builder.mutation<DeckWithAuthor, FormData>({
-      query: body => ({
-        url: 'v1/decks',
-        method: 'POST',
-        body,
-      }),
+    createDeck: builder.mutation<DeckWithAuthor, CreateDeckArgs>({
+      query: body => {
+        const formData = new FormData()
+
+        body.cover && formData.append('cover', body.cover)
+        formData.append('name', body.name)
+        formData.append('isPrivate', JSON.stringify(body.isPrivate))
+
+        return {
+          url: 'v1/decks',
+          method: 'POST',
+          body: formData,
+        }
+      },
       async onQueryStarted(_, { dispatch, getState, queryFulfilled }) {
         const state = getState() as RootState
         const { orderBy, cardsCount, currentPage, itemsPerPage, authorId, searchByName } =
@@ -55,7 +65,9 @@ const decksApi = baseApi.injectEndpoints({
                 orderBy: !orderBy ? null : `${orderBy?.key}-${orderBy?.direction}`,
               },
               draft => {
-                draft.items.pop()
+                if (draft.items.length < itemsPerPage) {
+                  draft.items.pop()
+                }
                 draft.items.unshift(res.data)
               }
             )
@@ -100,11 +112,13 @@ const decksApi = baseApi.injectEndpoints({
       },
       invalidatesTags: ['Decks'],
     }),
-    updateDeck: builder.mutation<DeckWithAuthor, FormData>({
-      query: formData => {
-        const id = formData.get('deckId')
+    updateDeck: builder.mutation<DeckWithAuthor, UpdateDeckArgs>({
+      query: ({ id, ...data }) => {
+        const formData = new FormData()
 
-        formData.delete('deckId')
+        data.cover && formData.append('cover', data.cover)
+        formData.append('name', data.name)
+        formData.append('isPrivate', JSON.stringify(data.isPrivate))
 
         return {
           url: `v1/decks/${id}`,
@@ -112,15 +126,10 @@ const decksApi = baseApi.injectEndpoints({
           body: formData,
         }
       },
-      async onQueryStarted(formData, { dispatch, getState, queryFulfilled }) {
+      async onQueryStarted({ id, ...patch }, { dispatch, getState, queryFulfilled }) {
         const state = getState() as RootState
         const { orderBy, cardsCount, currentPage, itemsPerPage, authorId, searchByName } =
           state.deckSlice
-
-        const id = formData.get('deckId') as string
-        const isPrivate = formData.get('isPrivate') as string
-        const cover = formData.get('cover') as File | null
-        const name = formData.get('name') as string
 
         const patchResult = dispatch(
           decksApi.util.updateQueryData(
@@ -137,20 +146,20 @@ const decksApi = baseApi.injectEndpoints({
             draft => {
               const deckId = draft.items.findIndex(deck => deck.id === id)
 
-              draft.items[deckId].name = name
-              if (cover) {
-                draft.items[deckId].cover = URL.createObjectURL(cover)
+              draft.items[deckId].name = patch.name
+              draft.items[deckId].isPrivate = patch.isPrivate
+              if (patch.cover) {
+                draft.items[deckId].cover = URL.createObjectURL(patch.cover)
               }
-              draft.items[deckId].isPrivate = Boolean(isPrivate === 'true')
             }
           )
         )
 
         const patchResult2 = dispatch(
           decksApi.util.updateQueryData('getDeckById', id, draft => {
-            draft.name = name
-            if (cover) {
-              draft.cover = URL.createObjectURL(cover)
+            draft.name = patch.name
+            if (patch.cover) {
+              draft.cover = URL.createObjectURL(patch.cover)
             }
           })
         )
