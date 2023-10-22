@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef, FC } from 'react'
+import { ComponentPropsWithoutRef, ElementRef, forwardRef } from 'react'
 
 import { RadioGroup as RadioGroupHeadless } from '@headlessui/react'
 
@@ -19,27 +19,29 @@ export type RadioGroupProps = {
   name?: string
 } & ComponentPropsWithoutRef<'div'>
 
-export const RadioGroup: FC<RadioGroupProps> = ({ options, disabled, ...rest }) => {
-  const classNames = {
-    option: s.option,
-    icon: s.icon,
-    label: s.label,
-  }
+export const RadioGroup = forwardRef<ElementRef<typeof RadioGroupHeadless>, RadioGroupProps>(
+  ({ options, disabled, ...rest }, ref) => {
+    const classNames = {
+      option: s.option,
+      icon: s.icon,
+      label: s.label,
+    }
 
-  return (
-    <Typography variant={'body2'} as={'label'} className={`${s.label} ${disabled && s.disabled}`}>
-      <RadioGroupHeadless disabled={disabled} {...rest}>
-        {options?.map(option => (
-          <RadioGroupHeadless.Option
-            key={option.value}
-            value={option.value}
-            className={classNames.option}
-          >
-            <div className={classNames.icon} />
-            <span className={classNames.label}>{option.label}</span>
-          </RadioGroupHeadless.Option>
-        ))}
-      </RadioGroupHeadless>
-    </Typography>
-  )
-}
+    return (
+      <Typography variant={'body2'} as={'label'} className={`${s.label} ${disabled && s.disabled}`}>
+        <RadioGroupHeadless disabled={disabled} {...rest} ref={ref}>
+          {options?.map(option => (
+            <RadioGroupHeadless.Option
+              key={option.value}
+              value={option.value}
+              className={classNames.option}
+            >
+              <div className={classNames.icon} />
+              <span className={classNames.label}>{option.label}</span>
+            </RadioGroupHeadless.Option>
+          ))}
+        </RadioGroupHeadless>
+      </Typography>
+    )
+  }
+)

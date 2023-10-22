@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { ElementRef, forwardRef } from 'react'
 
 import * as CheckboxRadix from '@radix-ui/react-checkbox'
 
@@ -15,25 +15,28 @@ export type CheckboxProps = {
   disabled?: boolean
   required?: boolean
 }
-export const Checkbox: FC<CheckboxProps> = ({ checked, disabled, required, label, onChange }) => {
-  return (
-    <Typography variant={'body2'} as={'label'} className={`${s.label} ${disabled && s.disabled}`}>
-      <div className={`${s.buttonWrapper} ${disabled && s.disabled}`}>
-        <CheckboxRadix.Root
-          className={`${s.root} ${disabled && s.disabled}`}
-          checked={checked}
-          disabled={disabled}
-          required={required}
-          onCheckedChange={onChange}
-        >
-          {checked && (
-            <CheckboxRadix.Indicator style={{ width: 24, height: 24 }}>
-              <Check />
-            </CheckboxRadix.Indicator>
-          )}
-        </CheckboxRadix.Root>
-      </div>
-      {label}
-    </Typography>
-  )
-}
+export const Checkbox = forwardRef<ElementRef<typeof CheckboxRadix.Root>, CheckboxProps>(
+  ({ checked, disabled, required, label, onChange }, ref) => {
+    return (
+      <Typography variant={'body2'} as={'label'} className={`${s.label} ${disabled && s.disabled}`}>
+        <div className={`${s.buttonWrapper} ${disabled && s.disabled}`}>
+          <CheckboxRadix.Root
+            ref={ref}
+            className={`${s.root} ${disabled && s.disabled}`}
+            checked={checked}
+            disabled={disabled}
+            required={required}
+            onCheckedChange={onChange}
+          >
+            {checked && (
+              <CheckboxRadix.Indicator style={{ width: 24, height: 24 }}>
+                <Check />
+              </CheckboxRadix.Indicator>
+            )}
+          </CheckboxRadix.Root>
+        </div>
+        {label}
+      </Typography>
+    )
+  }
+)
