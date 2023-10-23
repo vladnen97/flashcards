@@ -21,6 +21,7 @@ import {
 } from 'assets/icons'
 import Button from 'components/ui/button/button.tsx'
 import { Dropdown, DropdownItem, DropdownItemWithIcon } from 'components/ui/dropdown'
+import { Grade } from 'components/ui/grade'
 import { Pagination } from 'components/ui/pagination'
 import { Column, Head, Sort, Table, TableBody, TableCell, TableRow } from 'components/ui/table'
 import { TextField } from 'components/ui/text-field'
@@ -189,7 +190,9 @@ export const Cards = () => {
                     </div>
                   </TableCell>
                   <TableCell>{new Date(card.updated).toLocaleDateString('ru-RU')}</TableCell>
-                  <TableCell>{card.grade || 0}</TableCell>
+                  <TableCell>
+                    <Grade value={card.grade || 0} />
+                  </TableCell>
                   <TableCell>
                     {isDeckOwner && (
                       <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>

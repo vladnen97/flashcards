@@ -7,8 +7,8 @@ import { Star, StarOutline } from 'assets/icons'
 export type RatingValue = 0 | 1 | 2 | 3 | 4 | 5
 
 type GradeProps = {
-  value: RatingValue
-  onClick: (value: RatingValue) => void
+  value: number
+  onClick?: (value: RatingValue) => void
 }
 
 export const Grade: FC<GradeProps> = ({ value, onClick }) => {
@@ -26,14 +26,14 @@ export const Grade: FC<GradeProps> = ({ value, onClick }) => {
 type StarItemProps = {
   value: RatingValue
   selected: boolean
-  onClick: (value: RatingValue) => void
+  onClick?: (value: RatingValue) => void
 }
 
 const StarItem: FC<StarItemProps> = ({ value, selected, onClick }) => {
   return (
     <button
       onClick={() => {
-        onClick(value)
+        onClick?.(value)
       }}
       className={s.button}
     >
