@@ -9,7 +9,7 @@ export const RecoverPasswordPage = () => {
   const [recoverPassword] = useRecoverPasswordMutation()
   const handleRecoverPass = (data: { email: string }) => {
     const html: string =
-      '<h1>Hi, ##name##</h1><p>Click <a href="http://localhost:5173/reset-password/##token##">here</a> to recover your password</p>'
+      '<h1>Hi, ##name##</h1><p>Click <a href="https://flashcards-lake.vercel.app/reset-password/##token##">here</a> to recover your password</p>'
 
     recoverPassword({ html, ...data })
       .unwrap()
